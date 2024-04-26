@@ -1,4 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pokemon_shiny_hunt/screens/home_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/profile_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/settings_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/teams_screen.dart';
+import 'package:pokemon_shiny_hunt/utilities/firebase_options.dart';
+import 'package:pokemon_shiny_hunt/utilities/theme_data.dart';
+import 'package:provider/provider.dart';
+
+import 'models/data_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +29,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RawDataHandler(),
-      child: Consumer<RawDataHandler>(builder: (_, model, __) {
+      create: (context) => DataHandler(),
+      child: Consumer<DataHandler>(builder: (_, model, __) {
         return MaterialApp(
           theme: MyTheme.lightThemeData(context),
           darkTheme: MyTheme.darkThemeData(),
@@ -30,8 +41,7 @@ class _MyAppState extends State<MyApp> {
             HomeScreen.id: (context) => HomeScreen(),
             TeamsScreen.id: (context) => TeamsScreen(),
             SettingsScreen.id: (context) => SettingsScreen(),
-            BarChartScreen.id: (context) => BarChartScreen(),
-            SensorScreen.id: (context) => SensorScreen(),
+            ProfileScreen.id: (context) => ProfileScreen(),
           },
         );
       }),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "400833208514",
+    "project_id": "pokemonshinyhunt-ba36c",
+    "storage_bucket": "pokemonshinyhunt-ba36c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400833208514:android:f709dcd92db83fcd0b1b5b",
+        "android_client_info": {
+          "package_name": "com.JonathanSonnen.pokemon_shiny_hunt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxjB2lmnQoY2ORtK7FtMSSt8MRZ_iFv28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
