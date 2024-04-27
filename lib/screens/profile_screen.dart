@@ -2,11 +2,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:pokemon_shiny_hunt/screens/edit_profile_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/welcome_screen.dart';
+import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import '../utilities/constants.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   static const String id = 'profile_screen';
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final storage = FlutterSecureStorage();
+  String email = '';
+  String firstName = '';
+  String lastName = '';
+  String nickName = '';
+  String id = '';
+
+  @override
+  void initState() {
+
+    super.initState();
+    getInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,17 +37,27 @@ class ProfileScreen extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 80.0),
         child: FloatingActionButton.small(
-          onPressed: () {
-            // showModalBottomSheet(
-            //   context: context,
-            //   isScrollControlled: true,
-            //   builder: (context) => SingleChildScrollView(
-            //     child: Container(
-            //       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            //       TODO edit profile
-            //     ),
-            //   ),
-            // );
+          onPressed: id == '' ? null : () async {
+            final result = await showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: EditProfileScreen(uid: id, firstName: firstName, lastName: lastName, nickName: nickName,),
+                ),
+              ),
+            );
+            if (result != null) {
+              setState(() {
+                firstName = result[0];
+                lastName = result[1];
+                nickName = result[2];
+                storage.write(key: stFirstName, value: firstName);
+                storage.write(key: stLastName, value: lastName);
+                storage.write(key: stNickName, value: nickName);
+              });
+            }
           },
           heroTag: 'performance',
           shape: const CircleBorder(),
@@ -51,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
                     const Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: CircleAvatar(
-                        backgroundImage: const AssetImage('images/medley.png'),
+                        backgroundImage: const AssetImage('images/playstore.png'),
                         radius: 60.0,child: Padding(
                           padding: const EdgeInsets.only(left: 88.0, bottom: 88.0),
                           // child: PBInvertedIconButton(icon: Symbols.edit_rounded, onPressed: () {}, size: 24.0),
@@ -59,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Medley',
+                      nickName,
                       style: kHeadline1TextStyle. copyWith(color: Theme.of(context).colorScheme.secondary),
                     ),
                   ],
@@ -71,27 +104,27 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Name:',
+                      'Trainer:',
                       style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
                     ),
-                    const Text(
-                      'Jonathan Sonnen',
+                    Text(
+                      '$firstName $lastName',
                       style: kErrorTextStyle,
                     ),
                     Text(
                       'Email: ',
                       style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
                     ),
-                    const Text(
-                      'jona@gmail.com',
+                    Text(
+                      email,
                       style: kErrorTextStyle,
                     ),
                     Text(
-                      'Phone:',
+                      'Shiny count:',
                       style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
                     ),
-                    const Text(
-                      '+46 1234567890',
+                    Text(
+                      '1',
                       style: kSubHeadlineTextStyle,
                     ),
                   ],
@@ -106,7 +139,8 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8.0, left: 10.0),
                 child: TextButton(
                   onPressed: () {
-                    //TODO logout
+                    storage.deleteAll();
+                    Navigator.pushNamedAndRemoveUntil(context, WelcomeScreen.id, (route) => false);
                   },
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
@@ -147,4 +181,23 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> getInfo() async {
+    email = (await storage.read(key: stEmail))!;
+    id = (await storage.read(key: stUID))!;
+    setState(() {
+      email;
+      id;
+    });
+    firstName = (await storage.read(key: stFirstName))!;
+    lastName = (await storage.read(key: stLastName))!;
+    nickName = (await storage.read(key: stNickName))!;
+    setState(() {
+      firstName;
+      lastName;
+      nickName;
+    });
+  }
+
+
 }

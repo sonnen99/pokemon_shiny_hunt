@@ -4,7 +4,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pokemon_shiny_hunt/screens/profile_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/settings_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/teams_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/collected_screen.dart';
 import 'dart:ui';
 
 import '../utilities/constants.dart';
@@ -25,7 +25,6 @@ class _StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     super.initState();
-    loginUser();
     _pageController = PageController();
   }
 
@@ -45,6 +44,7 @@ class _StartScreenState extends State<StartScreen> {
               screenList[currentIndex],
               style: kScreenTitleStyle,
             ),
+            automaticallyImplyLeading: false,
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
@@ -66,7 +66,7 @@ class _StartScreenState extends State<StartScreen> {
               },
               children: <Widget>[
                 HomeScreen(),
-                TeamsScreen(),
+                CollectedScreen(),
                 SettingsScreen(),
                 ProfileScreen(),
               ]),
@@ -102,23 +102,23 @@ class _StartScreenState extends State<StartScreen> {
     });
   }
 
-  Future<void> loginUser() async {
-    String email = 'sonnen@gmail.com';
-    String password = '123456';
-
-    try {
-      final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      print('Registered');
-    } catch (e) {
-      print(e);
-    }
-    try {
-      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      print('Logged in');
-
-    } catch (e) {
-      print(e);
-    }
-
-  }
+  // Future<void> loginUser() async {
+  //   String email = 'sonnen@gmail.com';
+  //   String password = '123456';
+  //
+  //   try {
+  //     final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  //     print('Registered');
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   try {
+  //     final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+  //     print('Logged in');
+  //
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //
+  // }
 }

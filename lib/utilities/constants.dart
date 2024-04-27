@@ -25,8 +25,8 @@ final iconList = <IconData>[
 ];
 
 final screenList = <String>[
-  'Home',
-  'Team',
+  'Current hunts',
+  'Shiny collection',
   'Settings',
   'Profile',
 ];

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
-
 import '../utilities/constants.dart';
 import '../widgets/poke_hunt_list_tile.dart';
 
@@ -9,31 +7,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80.0),
-        child: FloatingActionButton.small(
-          onPressed: () {
-            // showModalBottomSheet(
-            //   context: context,
-            //   isScrollControlled: true,
-            //   builder: (context) => SingleChildScrollView(
-            //     child: Container(
-            //       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-            //       //TODO add new training
-            //     ),
-            //   ),
-            // );
-          },
-          shape: const CircleBorder(),
-          child: const Icon(
-            Symbols.add_rounded,
-            size: 32.0,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(Theme.of(context).brightness == Brightness.dark ? 'images/pokeball_dark.png' : 'images/pokeball_light.png'),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Padding(
+      child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
@@ -50,14 +30,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                       Text(
                         '205',
-                        style: kSubHeadlineTextStyle.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
                       ),
                     ],
                   ),
                 ],
               ),
               onPress: () {},
-              leading: Image.asset('pokemon/001_Bulbasaur_cover.png'),
+              leading: Image.asset('pokemon/001_Bulbasaur_cover.png',),
             ),
           ],
         ),

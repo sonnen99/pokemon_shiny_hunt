@@ -2,18 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:pokeball_widget/pokeball_widget.dart';
 
 
 final _firestore = FirebaseFirestore.instance;
 
-class TeamsScreen extends StatefulWidget {
+class CollectedScreen extends StatefulWidget {
   static const String id = 'teams_screen';
 
   @override
-  State<TeamsScreen> createState() => _TeamsScreenState();
+  State<CollectedScreen> createState() => _CollectedScreenState();
 }
 
-class _TeamsScreenState extends State<TeamsScreen> {
+class _CollectedScreenState extends State<CollectedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,11 +41,7 @@ class _TeamsScreenState extends State<TeamsScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: const Column(
-        children: [
-          // AthleteStream(),
-        ],
-      ),
+      body: Center(),
     );
   }
 }

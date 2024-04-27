@@ -6,8 +6,10 @@ class PokeTextField extends StatelessWidget {
   final void Function(String) onChanged;
   final String labelText;
   final TextEditingController textEditingController;
+  final bool obscureText;
+  final TextInputType keyboardType;
 
-  PokeTextField({required this.onChanged, required this.labelText, required this.textEditingController});
+  PokeTextField({required this.onChanged, required this.labelText, required this.textEditingController, required this.obscureText, required this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,8 @@ class PokeTextField extends StatelessWidget {
         ),
         textAlign: TextAlign.start,
         onChanged: onChanged,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
       );
   }
 
