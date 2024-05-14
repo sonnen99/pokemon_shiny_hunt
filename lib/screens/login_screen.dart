@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:pokemon_shiny_hunt/screens/home_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/constants.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
@@ -49,9 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         child: ModalProgressHUD(
-          progressIndicator: SpinKitPulsingGrid(
-            size: 80.0,
-            color: Theme.of(context).colorScheme.secondary,
+          progressIndicator: Lottie.asset(
+            'animations/pikachu_loading.json',
+            fit: BoxFit.fill,
+            frameRate: FrameRate.max,
+            repeat: true,
+            animate: true,
+            width: 200.0,
           ),
           inAsyncCall: inProgress,
           child: Padding(

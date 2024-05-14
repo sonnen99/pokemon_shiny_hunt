@@ -149,10 +149,9 @@ String getColor(BuildContext context, String color) {
 }
 
 String getLineColor(BuildContext context, String color) {
-  Color returnColor = const Color(0xFFFFFFFF);
+  Color returnColor = const Color(0xFF8E9099);
 
       switch (color) {
-
         case 'green':
           returnColor = const Color(0xFF85D98F);
           break;
@@ -196,4 +195,68 @@ Color getLineColorAsColor(BuildContext context, String color) {
   }
 
   return returnColor;
+}
+
+Color getTypeBackgroundColor(String type) {
+  Color color = const Color(0xFFFFFFFF);
+  switch (type) {
+    case 'bug':
+      color = const Color(0xFFADBD21);
+      break;
+    case 'dark':
+      color = const Color(0xFF735A4A);
+      break;
+    case 'dragon':
+      color = const Color(0xFF695BA5);
+      break;
+    case 'electric':
+      color = const Color(0xFFFFD464);
+      break;
+    case 'fairy':
+      color = const Color(0xFFF7B5F7);
+      break;
+    case 'fighting':
+      color = const Color(0xFFA55239);
+      break;
+    case 'fire':
+      color = const Color(0xFFF75231);
+      break;
+    case 'flying':
+      color = const Color(0xFF9CADF7);
+      break;
+    case 'ghost':
+      color = const Color(0xFF6363B5);
+      break;
+    case 'grass':
+      color = const Color(0xFF7ACB52);
+      break;
+    case 'ground':
+      color = const Color(0xFFE2CC8D);
+      break;
+    case 'ice':
+      color = const Color(0xFF5ACEE7);
+      break;
+    case 'normal':
+      color = const Color(0xFFADA594);
+      break;
+    case 'poison':
+      color = const Color(0xFFB55AA5);
+      break;
+    case 'psychic':
+      color = const Color(0xFFFF73A5);
+      break;
+    case 'rock':
+      color = const Color(0xFFBDA55A);
+      break;
+    case 'steel':
+      color = const Color(0xFFADADC6);
+      break;
+    case 'water':
+      color = const Color(0xFF399CFF);
+      break;
+    case 'selected':
+      color = const Color(0xFF43474e);
+      break;
+  }
+  return color;
 }

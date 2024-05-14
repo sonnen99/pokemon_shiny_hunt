@@ -3,12 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pokemon_shiny_hunt/screens/home_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/login_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/profile_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/registration_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/select_pokemon_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/settings_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/collected_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/pokedex_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/welcome_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/firebase_options.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
@@ -44,9 +46,10 @@ class MyApp extends StatelessWidget {
             RegistrationScreen.id: (context) => RegistrationScreen(),
             StartScreen.id: (context) => StartScreen(),
             HomeScreen.id: (context) => HomeScreen(),
-            CollectedScreen.id: (context) => CollectedScreen(),
+            PokedexScreen.id: (context) => PokedexScreen(),
             SettingsScreen.id: (context) => SettingsScreen(),
             ProfileScreen.id: (context) => ProfileScreen(),
+            SelectPokemonScreen.id: (context) => SelectPokemonScreen(),
           },
         );
       }),

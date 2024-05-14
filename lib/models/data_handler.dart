@@ -10,4 +10,16 @@ class DataHandler extends ChangeNotifier {
     _mode = _mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
   }
+
+  int _sortValue = 0;
+
+  void setSortValue(int value) {
+    _sortValue = value;
+    notifyListeners();
+  }
+
+  int get sortValue {
+    return _sortValue;
+  }
+
 }

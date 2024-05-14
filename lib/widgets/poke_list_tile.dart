@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class PokeListTile extends StatelessWidget {
   final String bleTitle;
   final void Function() onPress;
@@ -29,7 +28,4 @@ class PokeListTile extends StatelessWidget {
       ),
     );
   }
-
-
-
 }

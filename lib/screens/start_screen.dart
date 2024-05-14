@@ -2,12 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:pokemon_shiny_hunt/models/data_handler.dart';
 import 'package:pokemon_shiny_hunt/screens/profile_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/select_pokemon_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/settings_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/collected_screen.dart';
+import 'package:pokemon_shiny_hunt/screens/pokedex_screen.dart';
+import 'package:provider/provider.dart';
 import 'dart:ui';
 
 import '../utilities/constants.dart';
+import '../widgets/poke_inversed_icon_button.dart';
 import 'home_screen.dart';
 
 class StartScreen extends StatefulWidget {
@@ -45,16 +49,73 @@ class _StartScreenState extends State<StartScreen> {
               style: kScreenTitleStyle,
             ),
             automaticallyImplyLeading: false,
+            actions: [
+              if (currentIndex == 1)
+                PopupMenuButton(
+                  icon: Icon(
+                    Symbols.sort_rounded,
+                    size: 36.0,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onSelected: (value) {
+                    Provider.of<DataHandler>(context, listen: false).setSortValue(value);
+                  },
+                  itemBuilder: (builder) => [
+                    const PopupMenuItem(
+                      value: 0,
+                      child: Text(
+                        'Poke Index',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text(
+                        'Most encounters',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 2,
+                      child: Text(
+                        'Least encounters',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 3,
+                      child: Text(
+                        'Least time',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 4,
+                      child: Text(
+                        'Most time',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 5,
+                      child: Text(
+                        'Type',
+                        style: kButtonTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
             backgroundColor: Theme.of(context).colorScheme.primary,
             heroTag: 'performance',
             onPressed: () {
-              //TODO navigate to shiny hunt page
+              Navigator.pushNamed(context, SelectPokemonScreen.id);
             },
             shape: const CircleBorder(),
-            child:  Image.asset('images/playstore.png', fit: BoxFit.cover, gaplessPlayback: true),
+            child: Image.asset('images/playstore.png', fit: BoxFit.cover, gaplessPlayback: true),
           ),
           extendBody: true,
           body: PageView(
@@ -66,8 +127,8 @@ class _StartScreenState extends State<StartScreen> {
               },
               children: <Widget>[
                 HomeScreen(),
-                CollectedScreen(),
-                SettingsScreen(),
+                PokedexScreen(),
+                const SettingsScreen(),
                 ProfileScreen(),
               ]),
           bottomNavigationBar: Padding(
@@ -101,24 +162,4 @@ class _StartScreenState extends State<StartScreen> {
       );
     });
   }
-
-  // Future<void> loginUser() async {
-  //   String email = 'sonnen@gmail.com';
-  //   String password = '123456';
-  //
-  //   try {
-  //     final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-  //     print('Registered');
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  //   try {
-  //     final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-  //     print('Logged in');
-  //
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  //
-  // }
 }
