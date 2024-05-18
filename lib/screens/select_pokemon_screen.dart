@@ -9,6 +9,7 @@ import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
 
 import '../widgets/poke_inversed_icon_button.dart';
+import '../widgets/poke_text_field_free.dart';
 
 final _firestore = FirebaseFirestore.instance;
 
@@ -23,8 +24,17 @@ class SelectPokemonScreen extends StatefulWidget {
 
 class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
   bool filterOn = false;
+  bool searchOn = false;
+  String search = '';
   String filter = genList.first;
   String filter2 = typeList.first;
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   DropdownButton getGenDropdown() {
     List<DropdownMenuItem<String>> list = [];
@@ -87,16 +97,46 @@ class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
         actions: [
           SizedBox(
             width: 60.0,
-            child: PokeInvertedIconButton(icon: Symbols.filter_list_rounded, onPressed: () {
-              setState(() {
-                filterOn = !filterOn;
-              });
-            }, size: 36.0),
+            child: PokeInvertedIconButton(
+              icon: Symbols.search_rounded,
+              onPressed: () {
+                setState(() {
+                  searchOn = !searchOn;
+                });
+              },
+              size: 36.0,
+            ),
+          ),
+          SizedBox(
+            width: 60.0,
+            child: PokeInvertedIconButton(
+                icon: Symbols.filter_list_rounded,
+                onPressed: () {
+                  setState(() {
+                    filterOn = !filterOn;
+                  });
+                },
+                size: 36.0),
           ),
         ],
       ),
       body: Column(
         children: [
+          searchOn
+              ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PokeTextFieldFree(
+                    onChanged: (value) {
+                      setState(() {
+                        search = value;
+                      });
+                    },
+                    labelText: 'Search',
+                    textEditingController: _controller,
+                    obscureText: false,
+                    keyboardType: TextInputType.name),
+              )
+              : const SizedBox(),
           filterOn
               ? const Text(
                   'Gen:',
@@ -117,7 +157,18 @@ class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
               if (snapshot.hasData) {
                 List<MyPokemon> pokemonList = [];
                 for (var pokemon in snapshot.data!.docs) {
-                  pokemonList.add(MyPokemon(id: pokemon[fbPID], name: pokemon[fbPName], type: pokemon[fbType], gen: pokemon[fbGen]));
+                  pokemonList.add(
+                    MyPokemon(
+                      id: pokemon[fbPID],
+                      name: pokemon[fbPName],
+                      type: pokemon[fbType],
+                      type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
+                      gen: pokemon[fbGen],
+                    ),
+                  );
+                }
+                if (search != '') {
+                  pokemonList = pokemonList.where((element) => element.name.toLowerCase().contains(search)).toList();
                 }
                 switch (filter) {
                   case 'All':
@@ -231,6 +282,8 @@ class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
                           'pokemon/${pokemonList[index].id}_${pokemonList[index].name}_shiny.png',
                         ),
                         type: pokemonList[index].type,
+                        type2: pokemonList[index].type2,
+                        tag: '${pokemonList[index].id}select',
                       );
                     },
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),

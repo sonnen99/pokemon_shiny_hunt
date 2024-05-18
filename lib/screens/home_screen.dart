@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pokemon_shiny_hunt/models/caught_pokemon.dart';
 import 'package:pokemon_shiny_hunt/models/hunt_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
 import '../utilities/constants.dart';
@@ -39,14 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   stream: _firestore.collection(fbUsers).doc(id).collection(fbCurrentHunts).snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      List<HuntPokemon> pokemonList = [];
+                      List<CaughtPokemon> pokemonList = [];
                       for (var pokemon in snapshot.data!.docs) {
                         pokemonList.add(
-                          HuntPokemon(
+                          CaughtPokemon(
                             id: pokemon.id,
                             name: pokemon[fbPName],
                             encounter: pokemon[fbEncounter],
                             type: pokemon[fbType],
+                            type2: pokemon.toString().contains(fbType2) ? pokemon[fbType2] : '',
                             start: pokemon[fbStart],
                             end: pokemon[fbEnd],
                             nickname: pokemon[fbNickname],
@@ -88,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           PID: pokemonList[index].id,
                                           name: pokemonList[index].name,
                                           type: pokemonList[index].type,
+                                          type2: pokemonList[index].type2,
                                           UID: id,
                                           rate: pokemonList[index].rate,
                                         );
@@ -96,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                                 leading: Image.asset('pokemon/${pokemonList[index].id}_${pokemonList[index].name}_shiny.png'),
+                                tag: '${pokemonList[index].id}home',
                               );
                             }),
                       );

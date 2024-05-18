@@ -27,8 +27,7 @@ class AddShinyScreen extends StatefulWidget {
 }
 
 class _AddShinyScreenState extends State<AddShinyScreen> {
-  String filter1 = genList.first;
-  String filter2 = typeList.first;
+  String search = '';
   String rate = rateList.first;
   int encounter = 0;
   String nickname = '';
@@ -38,62 +37,14 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
   List<MyPokemon> pokemonList = [];
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
+  final TextEditingController _controller3 = TextEditingController();
 
   @override
   void dispose() {
     _controller.dispose();
     _controller2.dispose();
+    _controller3.dispose();
     super.dispose();
-  }
-
-  DropdownButton getGenDropdown() {
-    List<DropdownMenuItem<String>> list = [];
-    for (int i = 0; i < genList.length; i++) {
-      list.add(DropdownMenuItem(
-        value: genList[i],
-        child: Text(genList[i]),
-      ));
-    }
-    return DropdownButton<String>(
-      padding: const EdgeInsets.all(10.0),
-      value: filter1,
-      items: list,
-      onChanged: (value) {
-        setState(() {
-          filter1 = value!;
-        });
-      },
-      style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
-      borderRadius: BorderRadius.circular(10.0),
-      dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-      isExpanded: true,
-      isDense: true,
-    );
-  }
-
-  DropdownButton getTypeDropdown() {
-    List<DropdownMenuItem<String>> list = [];
-    for (int i = 0; i < typeList.length; i++) {
-      list.add(DropdownMenuItem(
-        value: typeList[i],
-        child: Text(typeList[i]),
-      ));
-    }
-    return DropdownButton<String>(
-      padding: const EdgeInsets.all(10.0),
-      value: filter2,
-      items: list,
-      onChanged: (value) {
-        setState(() {
-          filter2 = value!;
-        });
-      },
-      style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
-      borderRadius: BorderRadius.circular(10.0),
-      dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-      isExpanded: true,
-      isDense: true,
-    );
   }
 
   DropdownButton getRateDropdown() {
@@ -162,119 +113,36 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'Gen:',
-                  style: kHeadline2TextStyle,
-                ),
-                Expanded(child: getGenDropdown()),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'Type:',
-                  style: kHeadline2TextStyle,
-                ),
-                Expanded(child: getTypeDropdown()),
-              ],
-            ),
+            SizedBox(height: 30.0,),
+            PokeTextFieldFree(
+                onChanged: (value) {
+                  setState(() {
+                    search = value;
+                  });
+                },
+                labelText: 'Search',
+                textEditingController: _controller3,
+                obscureText: false,
+                keyboardType: TextInputType.name),
             StreamBuilder<QuerySnapshot>(
               stream: _firestore.collection(fbPokemon).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   pokemonList.clear();
                   for (var pokemon in snapshot.data!.docs) {
-                    pokemonList.add(MyPokemon(id: pokemon[fbPID], name: pokemon[fbPName], type: pokemon[fbType], gen: pokemon[fbGen]));
+                    pokemonList.add(
+                      MyPokemon(
+                        id: pokemon[fbPID],
+                        name: pokemon[fbPName],
+                        type: pokemon[fbType],
+                        type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
+                        gen: pokemon[fbGen],
+                      ),
+                    );
                   }
-                  switch (filter1) {
-                    case 'All':
-                      break;
-                    case 'Gen 1':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 1).toList();
-                      break;
-                    case 'Gen 2':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 2).toList();
-                      break;
-                    case 'Gen 3':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 3).toList();
-                      break;
-                    case 'Gen 4':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 4).toList();
-                      break;
-                    case 'Gen 5':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 5).toList();
-                      break;
-                    case 'Gen 6':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 6).toList();
-                      break;
-                    case 'Gen 7':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 7).toList();
-                      break;
-                    case 'Gen 8':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 8).toList();
-                      break;
-                    case 'Gen 9':
-                      pokemonList = pokemonList.where((element) => int.parse(element.gen) == 9).toList();
-                      break;
-                  }
-                  switch (filter2) {
-                    case 'All':
-                      break;
-                    case 'bug':
-                      pokemonList = pokemonList.where((element) => element.type == 'bug').toList();
-                      break;
-                    case 'dark':
-                      pokemonList = pokemonList.where((element) => element.type == 'dark').toList();
-                      break;
-                    case 'dragon':
-                      pokemonList = pokemonList.where((element) => element.type == 'dragon').toList();
-                      break;
-                    case 'electric':
-                      pokemonList = pokemonList.where((element) => element.type == 'electric').toList();
-                      break;
-                    case 'fairy':
-                      pokemonList = pokemonList.where((element) => element.type == 'fairy').toList();
-                      break;
-                    case 'fighting':
-                      pokemonList = pokemonList.where((element) => element.type == 'fighting').toList();
-                      break;
-                    case 'fire':
-                      pokemonList = pokemonList.where((element) => element.type == 'fire').toList();
-                      break;
-                    case 'flying':
-                      pokemonList = pokemonList.where((element) => element.type == 'flying').toList();
-                      break;
-                    case 'ghost':
-                      pokemonList = pokemonList.where((element) => element.type == 'ghost').toList();
-                      break;
-                    case 'grass':
-                      pokemonList = pokemonList.where((element) => element.type == 'grass').toList();
-                      break;
-                    case 'ice':
-                      pokemonList = pokemonList.where((element) => element.type == 'ice').toList();
-                      break;
-                    case 'normal':
-                      pokemonList = pokemonList.where((element) => element.type == 'normal').toList();
-                      break;
-                    case 'poison':
-                      pokemonList = pokemonList.where((element) => element.type == 'poison').toList();
-                      break;
-                    case 'psychic':
-                      pokemonList = pokemonList.where((element) => element.type == 'psychic').toList();
-                      break;
-                    case 'rock':
-                      pokemonList = pokemonList.where((element) => element.type == 'rock').toList();
-                      break;
-                    case 'steel':
-                      pokemonList = pokemonList.where((element) => element.type == 'steel').toList();
-                      break;
-                    case 'water':
-                      pokemonList = pokemonList.where((element) => element.type == 'water').toList();
-                      break;
+
+                  if (search != '') {
+                    pokemonList = pokemonList.where((element) => element.name.toLowerCase().contains(search)).toList();
                   }
                   pokemonList.sort((a, b) => a.id.compareTo(b.id));
 
@@ -295,6 +163,8 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
                             'pokemon/${pokemonList[index].id}_${pokemonList[index].name}_shiny.png',
                           ),
                           type: tapped ? 'selected' : pokemonList[index].type,
+                          type2: tapped ? 'selected' : pokemonList[index].type2,
+                          tag: pokemonList[index].id,
                         );
                       },
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -423,7 +293,9 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
                             fbPName: pokemonList[tapped_index].name,
                             fbEncounter: encounter,
                             fbPID: pokemonList[tapped_index].id,
+                            fbTwoTypes: pokemonList[tapped_index].type2 == '' ? false : true,
                             fbType: pokemonList[tapped_index].type,
+                            fbType2: pokemonList[tapped_index].type2,
                             fbStart: date,
                             fbEnd: date,
                             fbNickname: nickname.trim(),

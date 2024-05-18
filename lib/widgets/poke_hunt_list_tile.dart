@@ -6,8 +6,9 @@ class PokeHuntListTile extends StatelessWidget {
   final Widget content;
   final void Function() onPress;
   final Widget leading;
+  final String tag;
 
-  PokeHuntListTile({required this.content, required this.onPress, required this.leading});
+  PokeHuntListTile({required this.content, required this.onPress, required this.leading, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,9 @@ class PokeHuntListTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         tileColor: Theme.of(context).colorScheme.secondaryContainer,
         iconColor: Theme.of(context).colorScheme.onSecondaryContainer,
-        leading: leading,
+        leading: Hero(
+          tag: tag,
+            child: leading),
       ),
     );
   }

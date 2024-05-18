@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:pokemon_shiny_hunt/models/caught_pokemon.dart';
 import 'package:pokemon_shiny_hunt/models/data_handler.dart';
+import 'package:pokemon_shiny_hunt/models/my_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/add_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/caught_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
@@ -70,14 +72,15 @@ class _PokedexScreenState extends State<PokedexScreen> {
                     stream: _firestore.collection(fbUsers).doc(id).collection(fbShinies).snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        List<HuntPokemon> pokemonList = [];
+                        List<CaughtPokemon> pokemonList = [];
                         for (var pokemon in snapshot.data!.docs) {
                           pokemonList.add(
-                            HuntPokemon(
+                            CaughtPokemon(
                               id: pokemon.id,
                               name: pokemon[fbPName],
                               encounter: pokemon[fbEncounter],
                               type: pokemon[fbType],
+                              type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
                               start: pokemon[fbStart],
                               end: pokemon[fbEnd],
                               nickname: pokemon[fbNickname],
@@ -135,6 +138,8 @@ class _PokedexScreenState extends State<PokedexScreen> {
                                 },
                                 leading: Image.asset('pokemon/${pokemonList[index].id}_${pokemonList[index].name}_cover.png'),
                                 type: pokemonList[index].type,
+                                type2: pokemonList[index].type2,
+                                tag: '${pokemonList[index].id}shiny',
                               );
                             },
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

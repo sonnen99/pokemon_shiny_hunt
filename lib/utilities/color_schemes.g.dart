@@ -198,7 +198,7 @@ Color getLineColorAsColor(BuildContext context, String color) {
 }
 
 Color getTypeBackgroundColor(String type) {
-  Color color = const Color(0xFFFFFFFF);
+  Color color = const Color(0x00000000);
   switch (type) {
     case 'bug':
       color = const Color(0xFFADBD21);

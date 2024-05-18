@@ -26,10 +26,11 @@ class HuntScreen extends StatefulWidget {
   final String PID;
   final String name;
   final String type;
+  final String type2;
   final String UID;
   final String rate;
 
-  const HuntScreen({required this.PID, required this.name, required this.type, required this.UID, required this.rate});
+  const HuntScreen({required this.PID, required this.name, required this.type, required this.UID, required this.rate, required this.type2});
 
   @override
   State<HuntScreen> createState() => _HuntScreenState();
@@ -157,9 +158,12 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        Image.asset(
-                          'pokemon/${widget.PID}_${widget.name}_shiny.png',
-                          height: 240.0,
+                        Hero(
+                          tag: '${widget.PID}home',
+                          child: Image.asset(
+                            'pokemon/${widget.PID}_${widget.name}_shiny.png',
+                            height: 240.0,
+                          ),
                         ),
                         Lottie.asset(
                           'animations/shiny_encounter_stars.json',
@@ -391,7 +395,9 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                                       fbPName: widget.name,
                                       fbEncounter: encounter,
                                       fbPID: widget.PID,
+                                      fbTwoTypes: widget.type2 == '' ? false : true,
                                       fbType: widget.type,
+                                      fbType2: widget.type2,
                                       fbStart: startDate,
                                       fbEnd: date,
                                       fbNickname: '',
@@ -421,7 +427,9 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                                       fbPName: widget.name,
                                       fbEncounter: encounter,
                                       fbPID: widget.PID,
+                                      fbTwoTypes: widget.type2 == '' ? false : true,
                                       fbType: widget.type,
+                                      fbType2: widget.type2,
                                       fbStart: startDate,
                                       fbEnd: date,
                                       fbNickname: nickname.trim(),

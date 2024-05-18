@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
@@ -22,7 +24,7 @@ class SinglePokemonScreen extends StatefulWidget {
   final String name;
   final String type;
 
-  const SinglePokemonScreen({required this.PID, required this.name, required this.type});
+  const SinglePokemonScreen({required this.PID, required this.name, required this.type,});
 
   @override
   State<SinglePokemonScreen> createState() => _SinglePokemonScreenState();
@@ -62,6 +64,7 @@ class _SinglePokemonScreenState extends State<SinglePokemonScreen> with SingleTi
               fbPID: widget.PID,
               fbPName: widget.name,
               fbType: type1,
+              fbType2: type2,
               fbEncounter: 0,
               fbStart: date,
               fbEnd: '',
@@ -78,6 +81,7 @@ class _SinglePokemonScreenState extends State<SinglePokemonScreen> with SingleTi
                 PID: widget.PID,
                 name: widget.name,
                 type: widget.type,
+                type2: type2,
                 UID: UID,
                 rate: 'Rate',
               );
@@ -128,9 +132,12 @@ class _SinglePokemonScreenState extends State<SinglePokemonScreen> with SingleTi
                         'pokemon/${widget.PID}_${widget.name}_normal.png',
                         width: 120.0,
                       ),
-                      Image.asset(
-                        'pokemon/${widget.PID}_${widget.name}_shiny.png',
-                        width: 120.0,
+                      Hero(
+                        tag: '${widget.PID}select',
+                        child: Image.asset(
+                          'pokemon/${widget.PID}_${widget.name}_shiny.png',
+                          width: 120.0,
+                        ),
                       ),
                     ],
                   ),

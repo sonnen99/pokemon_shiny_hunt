@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -142,9 +143,12 @@ class _CaughtShinyScreenState extends State<CaughtShinyScreen> with SingleTicker
                       alignment: Alignment.center,
                       fit: StackFit.passthrough,
                       children: [
-                        Image.asset(
-                          'pokemon/${widget.PID}_${widget.name}_cover.png',
-                          height: 240.0,
+                        Hero(
+                          tag: '${widget.PID}shiny',
+                          child: Image.asset(
+                            'pokemon/${widget.PID}_${widget.name}_cover.png',
+                            height: 240.0,
+                          ),
                         ),
                         Lottie.asset(
                           'animations/static_stars.json',
