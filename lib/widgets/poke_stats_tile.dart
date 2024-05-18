@@ -22,8 +22,14 @@ class PokeStatTile extends StatelessWidget {
                 getTypeBackgroundColor(type).withOpacity(0.8),
                 type2 != '' ? getTypeBackgroundColor(type2).withOpacity(0.8) : getTypeBackgroundColor(type).withOpacity(0.8),
               ],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(1.0, 0.0),
+              begin: const FractionalOffset(
+                0.0,
+                0.8,
+              ),
+              end: const FractionalOffset(
+                1.0,
+                0.2,
+              ),
               stops: const [0.3, 0.7],
               tileMode: TileMode.clamp,
             ),

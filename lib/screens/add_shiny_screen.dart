@@ -113,7 +113,7 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 30.0,),
+            const SizedBox(height: 30.0,),
             PokeTextFieldFree(
                 onChanged: (value) {
                   setState(() {
