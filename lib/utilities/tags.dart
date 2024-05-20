@@ -33,6 +33,7 @@ const String stUID = 'UID';
 const String stFirstName = 'firstname';
 const String stLastName = 'lastname';
 const String stNickName = 'nickname';
+const String stProfilePicture = 'profile';
 
 
 

@@ -13,7 +13,9 @@ import 'package:pokemon_shiny_hunt/screens/welcome_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_stats_tile.dart';
+import 'package:pokemon_shiny_hunt/widgets/profile_grid_tile.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 import '../utilities/constants.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -27,11 +29,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final storage = const FlutterSecureStorage();
+  final _controller = SuperTooltipController();
   String email = '';
   String firstName = '';
   String lastName = '';
   String nickName = '';
   String id = '';
+  String profilePicture = '';
   int shinies = 0;
   int encounters = 0;
   int average = 0;
@@ -54,6 +58,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String type2Least = '';
   String type2Fast = '';
   String type2Slow = '';
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -117,14 +127,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage('images/playstore.png'),
-                        radius: 60.0,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 88.0, bottom: 88.0),
-                          // child: PBInvertedIconButton(icon: Symbols.edit_rounded, onPressed: () {}, size: 24.0),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GestureDetector(
+                        onTap: () async {
+                          _controller.showTooltip();
+                        },
+                        child: SuperTooltip(
+                          arrowBaseWidth: 50.0,
+                          arrowLength: 40.0,
+                          arrowTipDistance: 20.0,
+                          borderRadius: 20.0,
+                          bottom: 200.0,
+                          closeButtonColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                          closeButtonSize: 36.0,
+                          showCloseButton: ShowCloseButton.inside,
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          showBarrier: true,
+                          controller: _controller,
+                          content: GridView(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                            ),
+                            children: getProfilePictures(),
+                          ),
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(profilePicture != '' ? 'images/$profilePicture.png' : 'images/playstore.png'),
+                            radius: 60.0,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 88.0, bottom: 88.0),
+                              // child: PBInvertedIconButton(icon: Symbols.edit_rounded, onPressed: () {}, size: 24.0),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -145,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
                     ),
                     Text(
-                      firstName != null ? '$firstName $lastName' : '',
+                      firstName != '' ? '$firstName $lastName' : '',
                       style: kErrorTextStyle,
                     ),
                     Text(
@@ -490,10 +524,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     firstName = (await storage.read(key: stFirstName))!;
     lastName = (await storage.read(key: stLastName))!;
     nickName = (await storage.read(key: stNickName))!;
+    profilePicture = (await storage.read(key: stProfilePicture))!;
     setState(() {
       firstName;
       lastName;
       nickName;
+      profilePicture;
     });
   }
 
@@ -568,5 +604,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       typeLeast;
       time;
     });
+  }
+
+  List<Widget> getProfilePictures() {
+    List<Widget> gridList = [];
+    for (var image in imageList) {
+      gridList.add(ProfileGridTile(
+          onPress: () {
+            storage.write(key: stProfilePicture, value: image);
+            _controller.hideTooltip();
+            setState(() {
+              profilePicture = image;
+            });
+          },
+          image: 'images/$image.png'));
+    }
+    return gridList;
   }
 }
