@@ -284,6 +284,7 @@ class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
                         type: pokemonList[index].type,
                         type2: pokemonList[index].type2,
                         tag: '${pokemonList[index].id}select',
+                        id: pokemonList[index].id,
                       );
                     },
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),

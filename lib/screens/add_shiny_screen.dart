@@ -65,7 +65,7 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
         });
       },
       style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(20.0),
       dropdownColor: Theme.of(context).colorScheme.primaryContainer,
       isExpanded: true,
       isDense: true,
@@ -100,7 +100,7 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height / 1.5,
-      color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).brightness == Brightness.light ? Theme.of(context).colorScheme.outline: Theme.of(context).colorScheme.surface,
       child: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
@@ -114,6 +114,8 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 30.0,),
+            Text(pokemonList.isNotEmpty ? '#${pokemonList[tapped_index].id} ${pokemonList[tapped_index].name}' : '', style: kHeadline2TextStyle,),
+            const SizedBox(height: 4.0,),
             PokeTextFieldFree(
                 onChanged: (value) {
                   setState(() {
@@ -124,30 +126,30 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
                 textEditingController: _controller3,
                 obscureText: false,
                 keyboardType: TextInputType.name),
-            StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection(fbPokemon).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  pokemonList.clear();
-                  for (var pokemon in snapshot.data!.docs) {
-                    pokemonList.add(
-                      MyPokemon(
-                        id: pokemon[fbPID],
-                        name: pokemon[fbPName],
-                        type: pokemon[fbType],
-                        type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
-                        gen: pokemon[fbGen],
-                      ),
-                    );
-                  }
+            Flexible(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection(fbPokemon).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    pokemonList.clear();
+                    for (var pokemon in snapshot.data!.docs) {
+                      pokemonList.add(
+                        MyPokemon(
+                          id: pokemon[fbPID],
+                          name: pokemon[fbPName],
+                          type: pokemon[fbType],
+                          type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
+                          gen: pokemon[fbGen],
+                        ),
+                      );
+                    }
 
-                  if (search != '') {
-                    pokemonList = pokemonList.where((element) => element.name.toLowerCase().contains(search)).toList();
-                  }
-                  pokemonList.sort((a, b) => a.id.compareTo(b.id));
+                    if (search != '') {
+                      pokemonList = pokemonList.where((element) => element.name.toLowerCase().contains(search)).toList();
+                    }
+                    pokemonList.sort((a, b) => a.id.compareTo(b.id));
 
-                  return Expanded(
-                    child: GridView.builder(
+                    return GridView.builder(
                       scrollDirection: Axis.vertical,
                       padding: const EdgeInsets.all(10),
                       itemCount: pokemonList.length,
@@ -165,28 +167,29 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
                           type: tapped ? 'selected' : pokemonList[index].type,
                           type2: tapped ? 'selected' : pokemonList[index].type2,
                           tag: pokemonList[index].id,
+                          id: pokemonList[index].id,
                         );
                       },
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 6,
                       ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Center(
-                    child: Lottie.asset(
-                      'animations/pikachu_loading.json',
-                      fit: BoxFit.fill,
-                      frameRate: FrameRate.max,
-                      repeat: true,
-                      animate: true,
-                      width: 200.0,
-                    ),
-                  );
-                }
-              },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Center(
+                      child: Lottie.asset(
+                        'animations/pikachu_loading.json',
+                        fit: BoxFit.fill,
+                        frameRate: FrameRate.max,
+                        repeat: true,
+                        animate: true,
+                        width: 200.0,
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 6.0),

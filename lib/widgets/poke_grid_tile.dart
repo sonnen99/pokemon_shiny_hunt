@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../utilities/color_schemes.g.dart';
 
@@ -8,20 +9,22 @@ class PokeGridTile extends StatelessWidget {
   final String type;
   final String type2;
   final String tag;
+  final String id;
 
-  PokeGridTile({required this.onPress, required this.leading, required this.type, required this.type2, required this.tag});
+  PokeGridTile({required this.onPress, required this.leading, required this.type, required this.type2, required this.tag, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPress,
       child: Card(
+        elevation: 2.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(20.0),
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(20.0),
             gradient: LinearGradient(
               colors: [
                 getTypeBackgroundColor(type).withOpacity(0.8),
@@ -39,8 +42,16 @@ class PokeGridTile extends StatelessWidget {
               tileMode: TileMode.clamp,
             ),
           ),
-          child: Center(
-            child: Hero(tag: tag, child: leading),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Center(
+                  child: Hero(tag: tag, child: leading),
+                ),
+              ),
+              id.characters.last == 'f' ? Icon(Symbols.female_rounded, color: Theme.of(context).colorScheme.onPrimary,) : SizedBox(),
+            ],
           ),
         ),
       ),

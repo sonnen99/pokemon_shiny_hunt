@@ -129,12 +129,24 @@ class _CaughtShinyScreenState extends State<CaughtShinyScreen> with SingleTicker
                     const SizedBox(
                       height: 20.0,
                     ),
-                    Text(
-                      widget.nickname == '' ? widget.name : widget.nickname,
-                      style: kHeadline1TextStyle.copyWith(
-                        color: getTypeBackgroundColor(widget.type),
-                      ),
-                      textAlign: TextAlign.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.nickname == '' ? widget.name : widget.nickname,
+                          style: kHeadline1TextStyle.copyWith(
+                            color: getTypeBackgroundColor(widget.type),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        widget.PID.characters.last == 'f'
+                            ? Icon(
+                                Symbols.female_rounded,
+                                color: getTypeBackgroundColor(widget.type),
+                                size: 36.0,
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                     const SizedBox(
                       height: 10.0,

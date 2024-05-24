@@ -60,6 +60,9 @@ class _StartScreenState extends State<StartScreen> {
                   onSelected: (value) {
                     Provider.of<DataHandler>(context, listen: false).setSortValue(value);
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
                   itemBuilder: (builder) => [
                     const PopupMenuItem(
                       value: 0,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:pokeball_widget/pokeball_widget.dart';
-
 
 class PokeHuntListTile extends StatelessWidget {
   final Widget content;
@@ -13,18 +13,25 @@ class PokeHuntListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ListTile(
-        title: content,
-        onTap: onPress,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        tileColor: Theme.of(context).colorScheme.secondaryContainer,
-        iconColor: Theme.of(context).colorScheme.onSecondaryContainer,
-        leading: Hero(
-          tag: tag,
-            child: leading),
+      padding: const EdgeInsets.symmetric(
+        vertical: 2.0,
+      ),
+      child: Card(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: ListTile(
+          title: content,
+          onTap: onPress,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          tileColor: Theme.of(context).colorScheme.tertiaryContainer,
+          iconColor: Theme.of(context).colorScheme.onTertiaryContainer,
+          leading: Hero(tag: tag, child: leading),
+        ),
       ),
     );
   }
-
 }

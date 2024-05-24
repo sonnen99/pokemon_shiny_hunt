@@ -51,7 +51,7 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
   late final AnimationController _buttonAnimationController;
   late final AnimationController _starAnimationController;
 
-  DropdownButton getRateDropdown() {
+  Padding getRateDropdown() {
     List<DropdownMenuItem<String>> list = [];
     for (int i = 0; i < rateList.length; i++) {
       list.add(DropdownMenuItem(
@@ -59,24 +59,26 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
         child: Text(rateList[i]),
       ));
     }
-    return DropdownButton<String>(
-      padding: const EdgeInsets.all(10.0),
-      value: rate,
-      items: list,
-      onChanged: (value) {
-        setState(() {
-          rate = value!;
-          _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).set(
-            {fbRate: rate},
-            SetOptions(merge: true),
-          );
-        });
-      },
-      style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
-      borderRadius: BorderRadius.circular(10.0),
-      dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-      isExpanded: true,
-      isDense: true,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: DropdownButton<String>(
+        value: rate,
+        items: list,
+        onChanged: (value) {
+          setState(() {
+            rate = value!;
+            _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).set(
+              {fbRate: rate},
+              SetOptions(merge: true),
+            );
+          });
+        },
+        style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+        borderRadius: BorderRadius.circular(20.0),
+        dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+        isExpanded: false,
+        isDense: false,
+      ),
     );
   }
 
@@ -145,12 +147,24 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                     const SizedBox(
                       height: 20.0,
                     ),
-                    Text(
-                      widget.name,
-                      style: kHeadline1TextStyle.copyWith(
-                        color: getTypeBackgroundColor(widget.type),
-                      ),
-                      textAlign: TextAlign.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.name,
+                          style: kHeadline1TextStyle.copyWith(
+                            color: getTypeBackgroundColor(widget.type),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        widget.PID.characters.last == 'f'
+                            ? Icon(
+                                Symbols.female_rounded,
+                                color: getTypeBackgroundColor(widget.type),
+                                size: 36.0,
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                     const SizedBox(
                       height: 10.0,
@@ -338,7 +352,7 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                         _buttonAnimationController.forward();
                         Future.delayed(const Duration(milliseconds: 800), () async {
                           _buttonAnimationController.reset();
-                         final result = await showDialog(
+                          final result = await showDialog(
                             context: context,
                             barrierDismissible: true,
                             builder: (_) => AlertDialog(

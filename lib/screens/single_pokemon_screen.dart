@@ -7,6 +7,7 @@ import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/select_pokemon_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
@@ -110,12 +111,24 @@ class _SinglePokemonScreenState extends State<SinglePokemonScreen> with SingleTi
                   const SizedBox(
                     height: 20.0,
                   ),
-                  Text(
-                    widget.name,
-                    style: kHeadline1TextStyle.copyWith(
-                      color: getTypeBackgroundColor(widget.type),
-                    ),
-                    textAlign: TextAlign.center,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.name,
+                        style: kHeadline1TextStyle.copyWith(
+                          color: getTypeBackgroundColor(widget.type),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      widget.PID.characters.last == 'f'
+                          ? Icon(
+                        Symbols.female_rounded,
+                        color: getTypeBackgroundColor(widget.type),
+                        size: 36.0,
+                      )
+                          : const SizedBox(),
+                    ],
                   ),
                   const SizedBox(
                     height: 10.0,

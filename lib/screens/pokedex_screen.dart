@@ -11,9 +11,11 @@ import 'package:pokemon_shiny_hunt/models/my_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/add_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/caught_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_hunt_list_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../models/hunt_pokemon.dart';
+import '../utilities/constants.dart';
 import '../utilities/tags.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -28,6 +30,8 @@ class PokedexScreen extends StatefulWidget {
 
 class _PokedexScreenState extends State<PokedexScreen> {
   String id = '';
+  int shinyCount = 0;
+  int pokemonCount = 0;
 
   @override
   void initState() {
@@ -67,6 +71,28 @@ class _PokedexScreenState extends State<PokedexScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 8.0,
+              ),
+              child: Card(
+                elevation: 3.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: ListTile(
+                  title: Text(
+                    '$shinyCount / $pokemonCount',
+                    style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onTertiaryContainer),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  tileColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  iconColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                ),
+              ),
+            ),
             id != ''
                 ? StreamBuilder(
                     stream: _firestore.collection(fbUsers).doc(id).collection(fbShinies).snapshots(),
@@ -140,6 +166,7 @@ class _PokedexScreenState extends State<PokedexScreen> {
                                 type: pokemonList[index].type,
                                 type2: pokemonList[index].type2,
                                 tag: '${pokemonList[index].id}shiny',
+                                id: pokemonList[index].id,
                               );
                             },
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -178,8 +205,20 @@ class _PokedexScreenState extends State<PokedexScreen> {
 
   Future<void> getInfo() async {
     id = (await storage.read(key: stUID))!;
+    await _firestore.collection(fbUsers).doc(id).collection(fbShinies).get().then((value) {
+      if(value.docs.isNotEmpty) {
+        shinyCount = value.docs.length;
+      }
+    });
+    await _firestore.collection(fbPokemon).get().then((value) {
+      if(value.docs.isNotEmpty) {
+        pokemonCount = value.docs.length;
+      }
+    });
     setState(() {
       id;
+      shinyCount;
+      pokemonCount;
     });
   }
 }

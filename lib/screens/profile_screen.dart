@@ -200,8 +200,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: MediaQuery.of(context).size.width,
                       child: StaggeredGrid.count(
                         crossAxisCount: 6,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 4,
+                        mainAxisSpacing: 6,
+                        crossAxisSpacing: 2,
                         axisDirection: AxisDirection.right,
                         children: [
                           StaggeredGridTile.count(

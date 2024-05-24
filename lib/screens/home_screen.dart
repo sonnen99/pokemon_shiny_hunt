@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:pokemon_shiny_hunt/models/caught_pokemon.dart';
 import 'package:pokemon_shiny_hunt/models/hunt_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
@@ -70,9 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          pokemonList[index].name,
-                                          style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              pokemonList[index].name,
+                                              style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onTertiaryContainer),
+                                            ),
+                                            pokemonList[index].id.characters.last == 'f'
+                                                ? Icon(
+                                                    Symbols.female_rounded,
+                                                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                                                    size: 30.0,
+                                                  )
+                                                : const SizedBox(),
+                                          ],
                                         ),
                                         Text(
                                           pokemonList[index].encounter.toString(),

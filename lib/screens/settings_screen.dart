@@ -37,15 +37,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           selectedLanguage = value!;
         });
       },
-      style: kButtonTextStyle.copyWith(color: Theme
-          .of(context)
-          .colorScheme
-          .onSurfaceVariant),
-      borderRadius: BorderRadius.circular(10.0),
-      dropdownColor: Theme
-          .of(context)
-          .colorScheme
-          .surfaceVariant,
+      style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+      borderRadius: BorderRadius.circular(20.0),
+      dropdownColor: Theme.of(context).colorScheme.primaryContainer,
       isExpanded: false,
       isDense: false,
     );
@@ -54,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
