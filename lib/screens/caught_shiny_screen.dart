@@ -18,7 +18,7 @@ import 'package:pokemon_shiny_hunt/widgets/poke_delete_alert.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_elevated_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-import '../widgets/poke_inversed_icon_button.dart';
+import '../widgets/poke_inverted_icon_button.dart';
 
 final _firestore = FirebaseFirestore.instance;
 final storage = FlutterSecureStorage();

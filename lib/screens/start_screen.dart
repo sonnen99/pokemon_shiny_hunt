@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'dart:ui';
 
 import '../utilities/constants.dart';
-import '../widgets/poke_inversed_icon_button.dart';
+import '../widgets/poke_inverted_icon_button.dart';
 import 'home_screen.dart';
 
 class StartScreen extends StatefulWidget {

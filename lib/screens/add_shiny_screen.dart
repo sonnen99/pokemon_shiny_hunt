@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pokemon_shiny_hunt/utilities/constants.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_elevated_button.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_inversed_icon_button.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_inverted_icon_button.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_text_field_free.dart';
 
 import '../models/my_pokemon.dart';

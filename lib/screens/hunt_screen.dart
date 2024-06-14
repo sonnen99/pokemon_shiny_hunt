@@ -10,7 +10,7 @@ import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_inversed_icon_button.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_inverted_icon_button.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_text_field_free.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 

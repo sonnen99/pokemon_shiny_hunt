@@ -8,7 +8,7 @@ import 'package:pokemon_shiny_hunt/utilities/constants.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
 
-import '../widgets/poke_inversed_icon_button.dart';
+import '../widgets/poke_inverted_icon_button.dart';
 import '../widgets/poke_text_field_free.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -270,9 +270,8 @@ class _SelectPokemonScreenState extends State<SelectPokemonScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return SinglePokemonScreen(
-                                  PID: pokemonList[index].id,
-                                  name: pokemonList[index].name,
-                                  type: pokemonList[index].type,
+                                  pokemonList: pokemonList,
+                                  index: index,
                                 );
                               },
                             ),
