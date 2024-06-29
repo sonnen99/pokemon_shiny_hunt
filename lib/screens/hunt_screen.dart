@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:pokemon_shiny_hunt/screens/select_free_pokemon_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_inverted_icon_button.dart';
@@ -350,133 +351,221 @@ class _HuntScreenState extends State<HuntScreen> with TickerProviderStateMixin {
                         _stopWatchTimer.onStopTimer();
                         time = _stopWatchTimer.rawTime.value;
                         _buttonAnimationController.forward();
-                        Future.delayed(const Duration(milliseconds: 800), () async {
-                          _buttonAnimationController.reset();
-                          final result = await showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (_) => AlertDialog(
-                              title: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  top: 8.0,
-                                  right: 10.0,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Symbols.celebration_rounded,
-                                        size: 30.0,
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                      ),
-                                      Text(
-                                        'Congratulations you found a shiny pokemon',
-                                        textAlign: TextAlign.center,
-                                        style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
-                                      ),
-                                      const SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Text(
-                                        'Do you want to give a nickname?',
-                                        textAlign: TextAlign.center,
-                                        style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurface),
-                                      ),
-                                    ],
+                        if (encounter != 0) {
+                          Future.delayed(const Duration(milliseconds: 800), () async {
+                            _buttonAnimationController.reset();
+                            final result = await showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (_) => AlertDialog(
+                                title: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    top: 8.0,
+                                    right: 10.0,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Symbols.celebration_rounded,
+                                          size: 30.0,
+                                          color: Theme.of(context).colorScheme.tertiary,
+                                        ),
+                                        Text(
+                                          'Congratulations you found a shiny pokemon',
+                                          textAlign: TextAlign.center,
+                                          style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
+                                        ),
+                                        const SizedBox(
+                                          height: 4.0,
+                                        ),
+                                        Text(
+                                          'Do you want to give a nickname?',
+                                          textAlign: TextAlign.center,
+                                          style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
+                                content: PokeTextFieldFree(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      nickname = value;
+                                    });
+                                  },
+                                  labelText: 'Nickname',
+                                  textEditingController: _controller,
+                                  obscureText: false,
+                                  keyboardType: TextInputType.name,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      final Map<String, dynamic> newShiny;
+                                      final DateTime now = DateTime.now();
+                                      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+                                      final String date = formatter.format(now);
+                                      if (widget.name == 'Free') {
+                                        final result = await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (context) => SingleChildScrollView(
+                                            child: Container(
+                                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                              child: SelectFreePokemonScreen(UID: widget.UID),
+                                            ),
+                                          ),
+                                        );
+                                        if (result != null) {
+                                          newShiny = <String, dynamic>{
+                                            fbPName: result[0],
+                                            fbEncounter: encounter,
+                                            fbPID: result[1],
+                                            fbTwoTypes: result[3] == '' ? false : true,
+                                            fbType: result[2],
+                                            fbType2: result[3],
+                                            fbStart: startDate,
+                                            fbEnd: date,
+                                            fbNickname: '',
+                                            fbTime: time,
+                                            fbRate: rate,
+                                          };
+                                          _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(result[1]).set(newShiny);
+                                        } else {
+                                          return;
+                                        }
+                                      } else {
+                                        newShiny = <String, dynamic>{
+                                          fbPName: widget.name,
+                                          fbEncounter: encounter,
+                                          fbPID: widget.PID,
+                                          fbTwoTypes: widget.type2 == '' ? false : true,
+                                          fbType: widget.type,
+                                          fbType2: widget.type2,
+                                          fbStart: startDate,
+                                          fbEnd: date,
+                                          fbNickname: '',
+                                          fbTime: time,
+                                          fbRate: rate,
+                                        };
+                                        _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(widget.PID).set(newShiny);
+                                      }
+                                      _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).delete();
+                                      setState(() {
+                                        caught = true;
+                                      });
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text(
+                                      'No',
+                                      style: kButtonTextStyle.copyWith(
+                                        color: Theme.of(context).colorScheme.onErrorContainer,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      final DateTime now = DateTime.now();
+                                      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+                                      final String date = formatter.format(now);
+                                      final Map<String, dynamic> newShiny;
+                                      if (widget.name == 'Free') {
+                                        final result = await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (context) => SingleChildScrollView(
+                                            child: Container(
+                                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                              child: SelectFreePokemonScreen(UID: widget.UID),
+                                            ),
+                                          ),
+                                        );
+                                        if (result != null) {
+                                          newShiny = <String, dynamic>{
+                                            fbPName: result[0],
+                                            fbEncounter: encounter,
+                                            fbPID: result[1],
+                                            fbTwoTypes: result[3] == '' ? false : true,
+                                            fbType: result[2],
+                                            fbType2: result[3],
+                                            fbStart: startDate,
+                                            fbEnd: date,
+                                            fbNickname: '',
+                                            fbTime: time,
+                                            fbRate: rate,
+                                          };
+                                          _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(result[1]).set(newShiny);
+                                        } else {
+                                          return;
+                                        }
+                                      } else {
+                                        newShiny = <String, dynamic>{
+                                          fbPName: widget.name,
+                                          fbEncounter: encounter,
+                                          fbPID: widget.PID,
+                                          fbTwoTypes: widget.type2 == '' ? false : true,
+                                          fbType: widget.type,
+                                          fbType2: widget.type2,
+                                          fbStart: startDate,
+                                          fbEnd: date,
+                                          fbNickname: nickname.trim(),
+                                          fbTime: time,
+                                          fbRate: rate,
+                                        };
+                                        _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(widget.PID).set(newShiny);
+                                      }
+                                      setState(() {
+                                        caught = true;
+                                      });
+                                      _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).delete();
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text(
+                                      'Yes',
+                                      style: kButtonTextStyle.copyWith(
+                                        color: Theme.of(context).colorScheme.onErrorContainer,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              content: PokeTextFieldFree(
-                                onChanged: (value) {
-                                  setState(() {
-                                    nickname = value;
-                                  });
+                            );
+                            if (result) {
+                              _starAnimationController.forward();
+                              Future.delayed(
+                                const Duration(milliseconds: 1000),
+                                () {
+                                  Navigator.pushNamedAndRemoveUntil(context, StartScreen.id, (route) => false);
                                 },
-                                labelText: 'Nickname',
-                                textEditingController: _controller,
-                                obscureText: false,
-                                keyboardType: TextInputType.name,
+                              );
+                            }
+                          });
+                        } else {
+                          _buttonAnimationController.reset();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Encounter can not be 0',
+                                style: kButtonTextStyle.copyWith(
+                                  color: Theme.of(context).colorScheme.onError,
+                                ),
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    final DateTime now = DateTime.now();
-                                    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-                                    final String date = formatter.format(now);
-                                    final newShiny = <String, dynamic>{
-                                      fbPName: widget.name,
-                                      fbEncounter: encounter,
-                                      fbPID: widget.PID,
-                                      fbTwoTypes: widget.type2 == '' ? false : true,
-                                      fbType: widget.type,
-                                      fbType2: widget.type2,
-                                      fbStart: startDate,
-                                      fbEnd: date,
-                                      fbNickname: '',
-                                      fbTime: time,
-                                      fbRate: rate,
-                                    };
-                                    setState(() {
-                                      caught = true;
-                                    });
-                                    _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(widget.PID).set(newShiny);
-                                    _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).delete();
-                                    Navigator.pop(context, true);
-                                  },
-                                  child: Text(
-                                    'No',
-                                    style: kButtonTextStyle.copyWith(
-                                      color: Theme.of(context).colorScheme.onErrorContainer,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    final DateTime now = DateTime.now();
-                                    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-                                    final String date = formatter.format(now);
-                                    final newShiny = <String, dynamic>{
-                                      fbPName: widget.name,
-                                      fbEncounter: encounter,
-                                      fbPID: widget.PID,
-                                      fbTwoTypes: widget.type2 == '' ? false : true,
-                                      fbType: widget.type,
-                                      fbType2: widget.type2,
-                                      fbStart: startDate,
-                                      fbEnd: date,
-                                      fbNickname: nickname.trim(),
-                                      fbTime: time,
-                                      fbRate: rate,
-                                    };
-                                    setState(() {
-                                      caught = true;
-                                    });
-                                    _firestore.collection(fbUsers).doc(widget.UID).collection(fbShinies).doc(widget.PID).set(newShiny);
-                                    _firestore.collection(fbUsers).doc(widget.UID).collection(fbCurrentHunts).doc(widget.PID).delete();
-                                    Navigator.pop(context, true);
-                                  },
-                                  child: Text(
-                                    'Yes',
-                                    style: kButtonTextStyle.copyWith(
-                                      color: Theme.of(context).colorScheme.onErrorContainer,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              duration: const Duration(seconds: 2),
+                              backgroundColor: Theme.of(context).colorScheme.error,
+                              elevation: 5.0,
+                              showCloseIcon: true,
+                              closeIconColor: Theme.of(context).colorScheme.onError,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              margin: const EdgeInsets.all(20.0),
                             ),
                           );
-                          if (result) {
-                            _starAnimationController.forward();
-                            Future.delayed(
-                              const Duration(milliseconds: 1000),
-                              () {
-                                Navigator.pushNamedAndRemoveUntil(context, StartScreen.id, (route) => false);
-                              },
-                            );
-                          }
-                        });
+                        }
                       },
                       child: Lottie.asset(
                         'animations/star_button.json',

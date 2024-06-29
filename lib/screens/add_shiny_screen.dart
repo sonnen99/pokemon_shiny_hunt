@@ -99,7 +99,7 @@ class _AddShinyScreenState extends State<AddShinyScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 1.5,
+      height: MediaQuery.of(context).size.height / 1.6,
       color: Theme.of(context).brightness == Brightness.light ? Theme.of(context).colorScheme.outline: Theme.of(context).colorScheme.surface,
       child: Container(
         padding: const EdgeInsets.all(20.0),

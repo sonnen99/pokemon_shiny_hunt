@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -62,9 +63,12 @@ Future<bool> checkLogin() async {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? email = await storage.read(key: stEmail);
   String? password = await storage.read(key: stPassword);
-  if (email != null && password != null) {
-    final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-    return true;
+  final List<ConnectivityResult> results = await (Connectivity().checkConnectivity());
+  if (results.contains(ConnectivityResult.mobile) || results.contains(ConnectivityResult.wifi)){
+    if (email != null && password != null) {
+      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return true;
+    }
   }
   return false;
 }

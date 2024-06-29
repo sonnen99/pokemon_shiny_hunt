@@ -5,10 +5,11 @@ import 'package:pokeball_widget/pokeball_widget.dart';
 class PokeHuntListTile extends StatelessWidget {
   final Widget content;
   final void Function() onPress;
+  final void Function() onLongPress;
   final Widget leading;
   final String tag;
 
-  PokeHuntListTile({required this.content, required this.onPress, required this.leading, required this.tag});
+  PokeHuntListTile({required this.content, required this.onPress, required this.onLongPress, required this.leading, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class PokeHuntListTile extends StatelessWidget {
         child: ListTile(
           title: content,
           onTap: onPress,
+          onLongPress: onLongPress,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),

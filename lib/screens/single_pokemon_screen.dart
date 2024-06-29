@@ -130,12 +130,14 @@ class _SinglePokemonScreenState extends State<SinglePokemonScreen> with SingleTi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        name,
-                        style: kHeadline1TextStyle.copyWith(
-                          color: getTypeBackgroundColor(type1),
+                      Flexible(
+                        child: Text(
+                          name,
+                          style: kHeadline1TextStyle.copyWith(
+                            color: getTypeBackgroundColor(type1),
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       PID.characters.last == 'f'
                           ? Icon(
