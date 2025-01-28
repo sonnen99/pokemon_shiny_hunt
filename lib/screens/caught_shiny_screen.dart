@@ -1,27 +1,18 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/select_pokemon_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/start_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/welcome_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/color_schemes.g.dart';
 import 'package:pokemon_shiny_hunt/utilities/constants.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_delete_alert.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_elevated_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../widgets/poke_inverted_icon_button.dart';
 
 final _firestore = FirebaseFirestore.instance;
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class CaughtShinyScreen extends StatefulWidget {
   final String PID;
@@ -33,17 +24,20 @@ class CaughtShinyScreen extends StatefulWidget {
   final String nickname;
   final int time;
   final String rate;
+  final String game;
 
-  const CaughtShinyScreen(
-      {required this.PID,
-      required this.name,
-      required this.type,
-      required this.encounter,
-      required this.start,
-      required this.end,
-      required this.nickname,
-      required this.time,
-      required this.rate});
+  const CaughtShinyScreen({super.key,
+    required this.PID,
+    required this.name,
+    required this.type,
+    required this.encounter,
+    required this.start,
+    required this.end,
+    required this.nickname,
+    required this.time,
+    required this.rate,
+    required this.game,
+  });
 
   @override
   State<CaughtShinyScreen> createState() => _CaughtShinyScreenState();
@@ -59,11 +53,6 @@ class _CaughtShinyScreenState extends State<CaughtShinyScreen> with SingleTicker
   String UID = '';
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     getPokemonData(widget.PID);
@@ -73,31 +62,28 @@ class _CaughtShinyScreenState extends State<CaughtShinyScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       appBar: AppBar(
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0, left: 10.0),
-            child: TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (_) => PokeDeleteAlert(
-                    title: 'Delete shiny?',
-                    content: '#${widget.PID} ${widget.name} ',
-                    onYes: () {
-                      _firestore.collection(fbUsers).doc(UID).collection(fbShinies).doc(widget.PID).delete();
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                    },
-                  ),
-                );
-              },
-              child: Icon(
-                Symbols.delete_rounded,
-                color: Theme.of(context).colorScheme.error,
-                size: 36.0,
-              ),
-            ),
+          SizedBox(
+            width: 60.0,
+            child: PokeInvertedIconButton(
+                icon: Symbols.delete_rounded,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (_) => PokeDeleteAlert(
+                      title: 'Delete shiny?',
+                      content: '#${widget.PID} ${widget.name} ',
+                      onYes: () {
+                        _firestore.collection(fbUsers).doc(UID).collection(fbShinies).doc(widget.PID).delete();
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      },
+                    ),
+                  );
+                },
+                size: 36.0),
           ),
         ],
       ),
@@ -110,185 +96,397 @@ class _CaughtShinyScreenState extends State<CaughtShinyScreen> with SingleTicker
         size: 44.0,
       ),
       body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage(Theme.of(context).brightness == Brightness.dark ? 'images/pokeball_dark.png' : 'images/pokeball_light.png'),
-                alignment: Alignment.topCenter),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(
-                      height: 20.0,
+              Material(
+                elevation: 4.0,
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(30.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                          Theme.of(context).brightness == Brightness.dark ? 'images/pokeball_dark.png' : 'images/pokeball_light.png',
+                        ),
+                        fit: BoxFit.fill,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          widget.nickname == '' ? widget.name : widget.nickname,
-                          style: kHeadline1TextStyle.copyWith(
-                            color: getTypeBackgroundColor(widget.type),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        widget.PID.characters.last == 'f'
-                            ? Icon(
-                                Symbols.female_rounded,
-                                color: getTypeBackgroundColor(widget.type),
-                                size: 36.0,
-                              )
-                            : const SizedBox(),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      fit: StackFit.passthrough,
-                      children: [
-                        Hero(
-                          tag: '${widget.PID}shiny',
-                          child: Image.asset(
-                            'pokemon/${widget.PID}_${widget.name}_cover.png',
-                            height: 240.0,
-                          ),
-                        ),
-                        Lottie.asset(
-                          'animations/static_stars.json',
-                          fit: BoxFit.fill,
-                          animate: true,
-                          repeat: true,
-                          frameRate: FrameRate.max,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Image.asset(
-                          'pokemon/${widget.PID}_${widget.name}_normal.png',
-                          width: 120.0,
-                        ),
-                        Image.asset(
-                          'pokemon/${widget.PID}_${widget.name}_shiny.png',
-                          width: 120.0,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Encountered at: ',
-                          style: kHeadline2TextStyle,
-                        ),
-                        Text(
-                          widget.encounter.toString(),
-                          style: kHeadline1TextStyle.copyWith(
-                            color: getTypeBackgroundColor(widget.type),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'at rate: ',
-                          style: kHeadline2TextStyle,
-                        ),
-                        Text(
-                          widget.rate,
-                          style: kHeadline1TextStyle.copyWith(
-                            color: getTypeBackgroundColor(widget.type),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'after ',
-                          style: kHeadline2TextStyle,
-                        ),
-                        Text(
-                          StopWatchTimer.getDisplayTime(widget.time),
-                          style: kHeadline1TextStyle.copyWith(
-                            color: getTypeBackgroundColor(widget.type),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'Started: ${widget.start}',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Text(
-                      'Caught: ${widget.end}',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Text(
-                      'Pokedex: #${widget.PID}',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Text(
-                      'Generation: $gen',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Type: ',
-                          style: kHeadline2TextStyle,
-                        ),
-                        type1 != ''
-                            ? Container(
-                                height: 20.0,
-                                child: Image.asset(
-                                  'types/$type1.gif',
-                                  fit: BoxFit.fill,
-                                ),
-                              )
-                            : Container(),
                         const SizedBox(
-                          width: 4.0,
+                          height: 4.0,
                         ),
-                        type2 != ''
-                            ? Container(
-                                height: 20.0,
-                                child: Image.asset(
-                                  'types/$type2.gif',
-                                  fit: BoxFit.fill,
-                                ),
-                              )
-                            : Container(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.nickname == '' ? widget.name : widget.nickname,
+                              style: kHeadline1TextStyle.copyWith(
+                                color: getTypeBackgroundColor(widget.type),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            widget.PID.characters.last == 'f'
+                                ? Icon(
+                                    Symbols.female_rounded,
+                                    color: getTypeBackgroundColor(widget.type),
+                                    size: 36.0,
+                                  )
+                                : const SizedBox(),
+                          ],
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          fit: StackFit.passthrough,
+                          children: [
+                            Hero(
+                              tag: '${widget.PID}shiny',
+                              child: Image.asset(
+                                'pokemon/${widget.PID}_${widget.name}_cover.png',
+                                height: 240.0,
+                              ),
+                            ),
+                            Lottie.asset(
+                              'animations/static_stars.json',
+                              fit: BoxFit.fill,
+                              animate: true,
+                              repeat: true,
+                              frameRate: FrameRate.max,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Image.asset(
+                              'pokemon/${widget.PID}_${widget.name}_normal.png',
+                              width: 120.0,
+                            ),
+                            Image.asset(
+                              'pokemon/${widget.PID}_${widget.name}_shiny.png',
+                              width: 120.0,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                    Text(
-                      'Classification: $cls Pokemon',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Text(
-                      'Height: $height m',
-                      style: kHeadline2TextStyle,
-                    ),
-                    Text(
-                      'Weight: $weight kg',
-                      style: kHeadline2TextStyle,
-                    ),
-                  ],
+                  ),
                 ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Encounters: ',
+                        style: kHeadline2TextStyle.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      Text(
+                        widget.encounter.toString(),
+                        style: kHeadline1TextStyle.copyWith(
+                          color: getTypeBackgroundColor(widget.type),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 1.0,
+                    child: Divider(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total time:',
+                        style: kHeadline2TextStyle.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      Text(
+                        StopWatchTimer.getDisplayTime(widget.time),
+                        style: kHeadline1TextStyle.copyWith(
+                          color: getTypeBackgroundColor(widget.type),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 1.0,
+                    child: Divider(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                  Text(
+                    'Hunt details',
+                    style: kHeadline2TextStyle.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Material(
+                      elevation: 2.0,
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          border: Border.all(color: Theme.of(context).colorScheme.onSecondaryContainer, width: 0.5),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Game:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  widget.game,
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Encounter rate:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  widget.rate,
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Started:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  widget.start,
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Caught:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  widget.end,
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Pokemon details',
+                    style: kHeadline2TextStyle.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Material(
+                      elevation: 2.0,
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onSecondaryContainer,
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Pokedex:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  '#${widget.PID}',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Generation:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  gen,
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Type: ',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Row(
+                                  children: [
+                                    if (type1 != '')
+                                      SizedBox(
+                                        height: 20.0,
+                                        child: Image.asset(
+                                          'types/$type1.gif',
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    const SizedBox(
+                                      width: 4.0,
+                                    ),
+                                    if (type2 != '')
+                                      SizedBox(
+                                        height: 20.0,
+                                        child: Image.asset(
+                                          'types/$type2.gif',
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Classification:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  '$cls Pokemon',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Height:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  '$height m',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Weight:',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                                Text(
+                                  '$weight kg',
+                                  style: kDetailsTextStyle.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../utilities/color_schemes.g.dart';
 
 class ProfileGridTile extends StatelessWidget {
   final void Function() onPress;
   final String image;
 
-  ProfileGridTile({required this.onPress, required this.image,});
+  const ProfileGridTile({super.key, required this.onPress, required this.image,});
 
   @override
   Widget build(BuildContext context) {

@@ -14,6 +14,7 @@ const String fbStart = 'start';
 const String fbEnd = 'end';
 const String fbTime = 'time';
 const String fbRate = 'rate';
+const String fbGame = 'game';
 const String fbNickname = 'nickname';
 
 //Users
@@ -25,6 +26,7 @@ const String fbNickName = 'nickname';
 const String fbCurrentHunts = 'currenthunts';
 const String fbEncounter = 'encounter';
 const String fbShinies = 'shinies';
+const String fbProfilePicture = 'profilepicture';
 
 //Storage
 const String stEmail = 'email';

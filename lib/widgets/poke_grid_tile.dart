@@ -11,7 +11,7 @@ class PokeGridTile extends StatelessWidget {
   final String tag;
   final String id;
 
-  PokeGridTile({required this.onPress, required this.leading, required this.type, required this.type2, required this.tag, required this.id});
+  const PokeGridTile({super.key, required this.onPress, required this.leading, required this.type, required this.type2, required this.tag, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class PokeGridTile extends StatelessWidget {
                   child: Hero(tag: tag, child: leading),
                 ),
               ),
-              id.characters.last == 'f' ? Icon(Symbols.female_rounded, color: Theme.of(context).colorScheme.onPrimary,) : SizedBox(),
+              if(id.characters.last == 'f') Icon(Symbols.female_rounded, color: Theme.of(context).colorScheme.onPrimary,),
             ],
           ),
         ),

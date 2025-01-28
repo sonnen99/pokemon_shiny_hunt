@@ -1,5 +1,7 @@
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:pokemon_shiny_hunt/models/pokeball_icons.dart';
 
 const kBottomIconData = IconThemeData(
   fill: 0,
@@ -26,9 +28,16 @@ final iconList = <IconData>[
 
 final screenList = <String>[
   'Current hunts',
-  'Pokedex',
-  'Settings',
+  'Shiny dex',
+  'Missing shinies',
   'Profile',
+];
+
+final bottomBarList = <CrystalNavigationBarItem>[
+  CrystalNavigationBarItem(icon: Symbols.home_rounded,),
+  CrystalNavigationBarItem(icon: Pokeball.shiny_pokeball,),
+  CrystalNavigationBarItem(icon: Pokeball.pokeball),
+  CrystalNavigationBarItem(icon: Symbols.account_circle_rounded,),
 ];
 
 final languageList = <String>[
@@ -146,6 +155,33 @@ final rateList = <String>[
   '1/8192',
 ];
 
+final gameList = <String> [ //TODO add games
+  'Game',
+  'Red, Green',
+  'Blue',
+  'Yellow',
+  'Gold, Silver',
+  'Crystal',
+  'Ruby, Sapphire',
+  'FireRed, LeafGreen',
+  'Emerald',
+  'Diamond, Pearl',
+  'Platinum',
+  'HeartGold, SoulSilver',
+  'Black, White',
+  'Black 2, White 2',
+  'X, Y',
+  'Omega Ruby, Alpha Sapphire',
+  'Sun, Moon',
+  'Ultra Sun, Ultra Moon',
+  'Let\'s Go, Pikachu!',
+  'Sword, Shield',
+  'Brilliant Diamond, Shining Pearl',
+  'Legends: Arceus',
+  'Scarlet, Violet',
+  'Legends: Z-A'
+];
+
 final dayList = <String>[
   '0',
   '1',
@@ -181,22 +217,30 @@ final dayList = <String>[
   '30',
 ];
 
-const kScreenTitleStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 24.0,);
+const kEncounterLargeNumberStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 80.0,);
 
-const kButtonTextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 18.0,);
-
-const kSurfaceTextStyle = TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0,);
-
-const kErrorTextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 20.0,);
+const kEncounterSmallNumberStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 60.0,);
 
 const kHeadline1TextStyle = TextStyle(fontWeight: FontWeight.w400, fontSize: 32.0,);
 
+const kCupertinoTextStyle = TextStyle(fontWeight: FontWeight.w400, fontSize: 25.0,);
+
 const kHeadline2TextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 24.0,);
 
-const kSubHeadlineTextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 18.0,);
+const kPickerTextStyle = TextStyle(fontWeight: FontWeight.w200, fontSize: 24.0,);
 
-const kEncounterNumberStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 100.0,);
+const kErrorTextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 20.0,);
+
+const kDetailsTextStyle = TextStyle(fontWeight: FontWeight.w200, fontSize: 20.0);
+
+const kTextButtonTextStyle = TextStyle(fontWeight: FontWeight.w100, fontSize: 18.0,);
+
+const kElevatedButtonTextStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 18.0,);
+
+const kSurfaceTextStyle = TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0,);
+
+const kTextFieldTextStyle = TextStyle(fontWeight: FontWeight.w200, fontSize: 16.0, height: 1.2,);
 
 const kStatsTileTextStyle = TextStyle(fontWeight: FontWeight.w300, fontSize: 16.0,);
 
-const kCupertinoTextStyle = TextStyle(fontWeight: FontWeight.w400, fontSize: 25.0,);
+

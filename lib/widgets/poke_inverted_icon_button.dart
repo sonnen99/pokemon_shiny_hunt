@@ -5,7 +5,7 @@ class PokeInvertedIconButton extends StatelessWidget {
   final void Function()? onPressed;
   final double size;
 
-  PokeInvertedIconButton({required this.icon, required this.onPressed, required this.size});
+  const PokeInvertedIconButton({super.key, required this.icon, required this.onPressed, required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class PokeInvertedIconButton extends StatelessWidget {
       onPressed: onPressed,
       padding: const EdgeInsets.all(6.0),
       color: Colors.transparent,
-      disabledColor: Theme.of(context).colorScheme.surfaceVariant,
+      disabledColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       disabledElevation: 0,
       child: Icon(
         icon,

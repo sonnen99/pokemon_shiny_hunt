@@ -1,28 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:pokemon_shiny_hunt/models/caught_pokemon.dart';
 import 'package:pokemon_shiny_hunt/models/data_handler.dart';
-import 'package:pokemon_shiny_hunt/models/my_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/add_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/caught_shiny_screen.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_hunt_list_tile.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import '../models/hunt_pokemon.dart';
 import '../utilities/constants.dart';
 import '../utilities/tags.dart';
 
 final _firestore = FirebaseFirestore.instance;
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class PokedexScreen extends StatefulWidget {
   static const String id = 'teams_screen';
+
+  const PokedexScreen({super.key});
 
   @override
   State<PokedexScreen> createState() => _PokedexScreenState();
@@ -42,19 +40,13 @@ class _PokedexScreenState extends State<PokedexScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80.0),
+        padding: const EdgeInsets.only(bottom: 100.0),
         child: FloatingActionButton.small(
           onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: AddShinyScreen(UID: id),
-                ),
-              ),
+            PokeModalBottomSheet.of(context).showBottomSheet(
+              AddShinyScreen(UID: id),
             );
           },
           shape: const CircleBorder(),
@@ -68,28 +60,26 @@ class _PokedexScreenState extends State<PokedexScreen> {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.only(
                 bottom: 8.0,
               ),
-              child: Card(
-                elevation: 3.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
+              child: Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(30.0),
                 child: ListTile(
                   title: Text(
                     '$shinyCount / $pokemonCount',
-                    style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onTertiaryContainer),
+                    style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onTertiaryFixed),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  tileColor: Theme.of(context).colorScheme.tertiaryContainer,
-                  iconColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                  tileColor: Theme.of(context).colorScheme.tertiaryFixedDim,
+                  iconColor: Theme.of(context).colorScheme.onTertiaryFixed,
                 ),
               ),
             ),
@@ -112,6 +102,7 @@ class _PokedexScreenState extends State<PokedexScreen> {
                               nickname: pokemon[fbNickname],
                               time: pokemon[fbTime],
                               rate: pokemon[fbRate],
+                              game: pokemon[fbGame],
                             ),
                           );
                         }
@@ -136,9 +127,9 @@ class _PokedexScreenState extends State<PokedexScreen> {
                             pokemonList.sort((a, b) => a.type.compareTo(b.type));
                             break;
                         }
-
                         return Expanded(
                           child: GridView.builder(
+                            shrinkWrap: true,
                             itemCount: pokemonList.length,
                             itemBuilder: (context, index) {
                               return PokeGridTile(
@@ -157,6 +148,7 @@ class _PokedexScreenState extends State<PokedexScreen> {
                                           nickname: pokemonList[index].nickname,
                                           time: pokemonList[index].time,
                                           rate: pokemonList[index].rate,
+                                          game: pokemonList[index].game,
                                         );
                                       },
                                     ),
@@ -206,19 +198,21 @@ class _PokedexScreenState extends State<PokedexScreen> {
   Future<void> getInfo() async {
     id = (await storage.read(key: stUID))!;
     await _firestore.collection(fbUsers).doc(id).collection(fbShinies).get().then((value) {
-      if(value.docs.isNotEmpty) {
+      if (value.docs.isNotEmpty) {
         shinyCount = value.docs.length;
       }
     });
     await _firestore.collection(fbPokemon).get().then((value) {
-      if(value.docs.isNotEmpty) {
+      if (value.docs.isNotEmpty) {
         pokemonCount = value.docs.length;
       }
     });
-    setState(() {
-      id;
-      shinyCount;
-      pokemonCount;
-    });
+    if (mounted) {
+      setState(() {
+        id;
+        shinyCount;
+        pokemonCount;
+      });
+    }
   }
 }

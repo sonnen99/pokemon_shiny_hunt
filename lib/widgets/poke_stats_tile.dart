@@ -7,7 +7,7 @@ class PokeStatTile extends StatelessWidget {
   final String type;
   final String type2;
 
-  PokeStatTile({required this.content, required this.type, required this.type2});
+  const PokeStatTile({super.key, required this.content, required this.type, required this.type2});
 
   @override
   Widget build(BuildContext context) {

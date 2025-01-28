@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pokemon_shiny_hunt/screens/home_screen.dart';
-import 'package:pokemon_shiny_hunt/screens/hunt_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/login_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/profile_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/registration_screen.dart';
@@ -27,8 +26,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  bool isLoggedIn;
-  MyApp({super.key, required this.isLoggedIn});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   // This widget is the root of your application.
   @override
@@ -42,15 +41,15 @@ class MyApp extends StatelessWidget {
           themeMode: model.mode,
           initialRoute: isLoggedIn ? StartScreen.id : WelcomeScreen.id,
           routes: {
-            WelcomeScreen.id: (context) => WelcomeScreen(),
-            LoginScreen.id: (context) => LoginScreen(),
-            RegistrationScreen.id: (context) => RegistrationScreen(),
-            StartScreen.id: (context) => StartScreen(),
-            HomeScreen.id: (context) => HomeScreen(),
-            PokedexScreen.id: (context) => PokedexScreen(),
-            SettingsScreen.id: (context) => SettingsScreen(),
-            ProfileScreen.id: (context) => ProfileScreen(),
-            SelectPokemonScreen.id: (context) => SelectPokemonScreen(),
+            WelcomeScreen.id: (context) => const WelcomeScreen(),
+            LoginScreen.id: (context) => const LoginScreen(),
+            RegistrationScreen.id: (context) => const RegistrationScreen(),
+            StartScreen.id: (context) => const StartScreen(),
+            HomeScreen.id: (context) => const HomeScreen(),
+            PokedexScreen.id: (context) => const PokedexScreen(),
+            SettingsScreen.id: (context) => const SettingsScreen(),
+            ProfileScreen.id: (context) => const ProfileScreen(),
+            SelectPokemonScreen.id: (context) => const SelectPokemonScreen(),
           },
         );
       }),
@@ -59,14 +58,14 @@ class MyApp extends StatelessWidget {
 }
 
 Future<bool> checkLogin() async {
-  final storage = FlutterSecureStorage();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  const storage = FlutterSecureStorage();
+  final FirebaseAuth auth = FirebaseAuth.instance;
   String? email = await storage.read(key: stEmail);
   String? password = await storage.read(key: stPassword);
   final List<ConnectivityResult> results = await (Connectivity().checkConnectivity());
   if (results.contains(ConnectivityResult.mobile) || results.contains(ConnectivityResult.wifi)){
     if (email != null && password != null) {
-      final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     }
   }

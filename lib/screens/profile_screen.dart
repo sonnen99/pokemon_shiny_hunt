@@ -1,27 +1,24 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:ui';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:lottie/lottie.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:pokemon_shiny_hunt/models/caught_pokemon.dart';
-import 'package:pokemon_shiny_hunt/models/hunt_pokemon.dart';
 import 'package:pokemon_shiny_hunt/screens/edit_profile_screen.dart';
 import 'package:pokemon_shiny_hunt/screens/welcome_screen.dart';
 import 'package:pokemon_shiny_hunt/utilities/tags.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_grid_tile.dart';
-import 'package:pokemon_shiny_hunt/widgets/poke_stats_tile.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_modal_bottom_sheet.dart';
+import 'package:pokemon_shiny_hunt/widgets/poke_text_button.dart';
 import 'package:pokemon_shiny_hunt/widgets/profile_grid_tile.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 import '../utilities/constants.dart';
 
-final _firestore = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class ProfileScreen extends StatefulWidget {
   static const String id = 'profile_screen';
+
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -36,28 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String nickName = '';
   String id = '';
   String profilePicture = '';
-  int shinies = 0;
-  int encounters = 0;
-  int average = 0;
-  int most = 0;
-  int least = 0;
-  int time = 0;
-  String nameMost = '';
-  String nameLeast = '';
-  String nameFast = '';
-  String nameSlow = '';
-  String idMost = '';
-  String idLeast = '';
-  String idFast = '';
-  String idSlow = '';
-  String typeMost = '';
-  String typeLeast = '';
-  String typeFast = '';
-  String typeSlow = '';
-  String type2Most = '';
-  String type2Least = '';
-  String type2Fast = '';
-  String type2Slow = '';
 
   @override
   void dispose() {
@@ -74,25 +49,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+      extendBody: true,
+      backgroundColor: Colors.transparent,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80.0),
+        padding: const EdgeInsets.only(bottom: 100.0),
         child: FloatingActionButton.small(
           onPressed: id.isEmpty
               ? null
               : () async {
-                  final result = await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => SingleChildScrollView(
-                      child: Container(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: EditProfileScreen(
-                          uid: id,
-                          firstName: firstName,
-                          lastName: lastName,
-                          nickName: nickName,
-                        ),
-                      ),
+                  final result = await PokeModalBottomSheet.of(context).showBottomSheet(
+                    EditProfileScreen(
+                      uid: id,
+                      firstName: firstName,
+                      lastName: lastName,
+                      nickName: nickName,
                     ),
                   );
                   if (result != null) {
@@ -137,377 +108,118 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           arrowBaseWidth: 50.0,
                           arrowLength: 40.0,
                           arrowTipDistance: 20.0,
-                          borderRadius: 20.0,
+                          borderRadius: 30.0,
                           bottom: 200.0,
                           closeButtonColor: Theme.of(context).colorScheme.onPrimaryContainer,
                           closeButtonSize: 36.0,
-                          showCloseButton: ShowCloseButton.inside,
+                          showCloseButton: true,
+                          closeButtonType: CloseButtonType.inside,
                           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                           showBarrier: true,
                           controller: _controller,
-                          content: GridView(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
+                          content: ClipRRect(
+                            borderRadius: BorderRadius.circular(30.0),
+                            child: GridView(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                              ),
+                              children: getProfilePictures(),
                             ),
-                            children: getProfilePictures(),
                           ),
                           child: CircleAvatar(
                             backgroundImage: AssetImage(profilePicture != '' ? 'images/$profilePicture.png' : 'images/playstore.png'),
                             radius: 60.0,
-                            child: const Padding(
-                              padding: EdgeInsets.only(left: 88.0, bottom: 88.0),
-                              // child: PBInvertedIconButton(icon: Symbols.edit_rounded, onPressed: () {}, size: 24.0),
-                            ),
                           ),
                         ),
                       ),
                     ),
-                    Text(
-                      nickName,
-                      style: kHeadline1TextStyle.copyWith(color: Theme.of(context).colorScheme.secondary),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 12.0,
+                      ),
+                      child: Text(
+                        nickName,
+                        style: kHeadline1TextStyle.copyWith(color: Theme.of(context).colorScheme.secondary),
+                      ),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Trainer:',
-                      style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                    Text(
-                      firstName != '' ? '$firstName $lastName' : '',
-                      style: kErrorTextStyle,
-                    ),
-                    Text(
-                      'Email: ',
-                      style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                    Text(
-                      email ?? '',
-                      style: kErrorTextStyle,
-                    ),
-                    Text(
-                      'Shiny stats:',
-                      style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                    // most, least, total caught, total encounters, average encounters
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 3,
-                      width: MediaQuery.of(context).size.width,
-                      child: StaggeredGrid.count(
-                        crossAxisCount: 6,
-                        mainAxisSpacing: 6,
-                        crossAxisSpacing: 2,
-                        axisDirection: AxisDirection.right,
-                        children: [
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 3,
-                            mainAxisCellCount: 4,
-                            child: PokeStatTile(
-                              content: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  shinies != null
-                                      ? Text(
-                                          shinies.toString(),
-                                          style: kEncounterNumberStyle.copyWith(fontSize: 80.0),
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 110.0,
-                                          width: 110.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Total shinies',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: 'fire',
-                              type2: 'fire',
+                padding: const EdgeInsets.all(10.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: Material(
+                    color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.7),
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(30.0),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaY: 5.0, sigmaX: 5.0),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 20.0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Trainer:',
+                              style: kCupertinoTextStyle.copyWith(color: Theme.of(context).colorScheme.secondary),
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 2,
-                            mainAxisCellCount: 2,
-                            child: PokeStatTile(
-                              content: Column(
-                                children: [
-                                  idFast.isNotEmpty
-                                      ? Image.asset(
-                                          'pokemon/${idFast}_${nameFast}_cover.png',
-                                          height: 70.0,
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 60.0,
-                                          width: 60.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Fastest',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: typeFast,
-                              type2: type2Fast,
+                            Text(
+                              firstName != '' ? '$firstName $lastName' : '',
+                              style: kSurfaceTextStyle,
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 2,
-                            mainAxisCellCount: 2,
-                            child: PokeStatTile(
-                              content: Column(
-                                children: [
-                                  idSlow.isNotEmpty
-                                      ? Image.asset(
-                                          'pokemon/${idSlow}_${nameSlow}_cover.png',
-                                          height: 70.0,
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 60.0,
-                                          width: 60.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Longest',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: typeSlow,
-                              type2: type2Slow,
+                            Divider(
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 2,
-                            mainAxisCellCount: 4,
-                            child: PokeStatTile(
-                              content: Column(
-                                children: [
-                                  encounters != null
-                                      ? Text(
-                                          encounters.toString(),
-                                          style: kHeadline1TextStyle.copyWith(fontSize: 44.0),
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 60.0,
-                                          width: 60.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Total encounters',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: 'electric',
-                              type2: 'electric',
+                            Text(
+                              'Email: ',
+                              style: kCupertinoTextStyle.copyWith(color: Theme.of(context).colorScheme.secondary),
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 1,
-                            mainAxisCellCount: 8,
-                            child: PokeStatTile(
-                              content: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      'Average time:  ',
-                                      textAlign: TextAlign.center,
-                                      style: kStatsTileTextStyle,
-                                    ),
-                                    time != null
-                                        ? Text(
-                                            StopWatchTimer.getDisplayTime(time),
-                                            textAlign: TextAlign.center,
-                                            style: kHeadline1TextStyle.copyWith(fontSize: 28.0),
-                                          )
-                                        : Lottie.asset(
-                                            'animations/stars_loading.json',
-                                            height: 40.0,
-                                            width: 40.0,
-                                            animate: true,
-                                            repeat: true,
-                                            fit: BoxFit.fill,
-                                          ),
-                                  ],
-                                ),
-                              ),
-                              type: 'grass',
-                              type2: 'grass',
+                            Text(
+                              email,
+                              style: kSurfaceTextStyle,
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 2,
-                            mainAxisCellCount: 2,
-                            child: PokeStatTile(
-                              content: Column(
-                                children: [
-                                  idMost.isNotEmpty
-                                      ? Image.asset(
-                                          'pokemon/${idMost}_${nameMost}_cover.png',
-                                          height: 70.0,
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 60.0,
-                                          width: 60.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Most',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: typeMost,
-                              type2: type2Most,
+                            Divider(
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 1,
-                            mainAxisCellCount: 4,
-                            child: PokeStatTile(
-                              content: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      'Average:  ',
-                                      textAlign: TextAlign.center,
-                                      style: kStatsTileTextStyle,
-                                    ),
-                                    average != null
-                                        ? Text(
-                                            average.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: kHeadline1TextStyle.copyWith(fontSize: 28.0),
-                                          )
-                                        : Lottie.asset(
-                                            'animations/stars_loading.json',
-                                            height: 40.0,
-                                            width: 40.0,
-                                            animate: true,
-                                            repeat: true,
-                                            fit: BoxFit.fill,
-                                          ),
-                                  ],
-                                ),
-                              ),
-                              type: 'fairy',
-                              type2: 'fairy',
-                            ),
-                          ),
-                          StaggeredGridTile.count(
-                            crossAxisCellCount: 2,
-                            mainAxisCellCount: 2,
-                            child: PokeStatTile(
-                              content: Column(
-                                children: [
-                                  idLeast.isNotEmpty
-                                      ? Image.asset(
-                                          'pokemon/${idLeast}_${nameLeast}_cover.png',
-                                          height: 70.0,
-                                        )
-                                      : Lottie.asset(
-                                          'animations/stars_loading.json',
-                                          height: 60.0,
-                                          width: 60.0,
-                                          animate: true,
-                                          repeat: true,
-                                          fit: BoxFit.fill,
-                                        ),
-                                  const Text(
-                                    'Least',
-                                    style: kStatsTileTextStyle,
-                                  ),
-                                ],
-                              ),
-                              type: typeLeast,
-                              type2: type2Least,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               )
             ],
           ),
+          const SizedBox(),
+          const SizedBox(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 80.0, left: 10.0),
-                child: TextButton(
-                  onPressed: () {
-                    storage.deleteAll();
-                    Navigator.pushNamedAndRemoveUntil(context, WelcomeScreen.id, (route) => false);
-                  },
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Symbols.logout_rounded,
-                      ),
-                      SizedBox(
-                        width: 4.0,
-                      ),
-                      Text(
-                        'Logout',
-                        style: kErrorTextStyle,
-                      ),
-                    ],
-                  ),
-                ),
+              PokeTextButton(
+                onPressed: () {
+                  _auth.signOut();
+                  storage.deleteAll();
+                  Navigator.pushNamedAndRemoveUntil(context, WelcomeScreen.id, (route) => false);
+                },
+                icon: Symbols.logout_rounded,
+                text: 'Logout',
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 80.0, left: 10.0),
-                child: TextButton(
-                  onPressed: () {
-                    //TODO delete profile
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Symbols.delete_rounded,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      const SizedBox(
-                        width: 4.0,
-                      ),
-                      Text(
-                        'Delete',
-                        style: kErrorTextStyle.copyWith(color: Theme.of(context).colorScheme.error),
-                      ),
-                    ],
-                  ),
-                ),
+              PokeTextButton(
+                onPressed: () {
+                  //TODO delete profile
+                },
+                icon: Symbols.delete_rounded,
+                text: 'Delete',
+                color: Theme.of(context).colorScheme.error,
               ),
             ],
           ),
+          const SizedBox(),
         ],
       ),
     );
@@ -516,108 +228,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> getInfo() async {
     email = (await storage.read(key: stEmail))!;
     id = (await storage.read(key: stUID))!;
-    getStats();
-    setState(() {
-      email;
-      id;
-    });
+    if (mounted) {
+      setState(() {
+        email;
+        id;
+      });
+    }
     firstName = (await storage.read(key: stFirstName))!;
     lastName = (await storage.read(key: stLastName))!;
     nickName = (await storage.read(key: stNickName))!;
     profilePicture = (await storage.read(key: stProfilePicture))!;
-    setState(() {
-      firstName;
-      lastName;
-      nickName;
-      profilePicture;
-    });
-  }
-
-  void getStats() {
-    List<CaughtPokemon> pokemonList = [];
-    int totalTime = 0;
-    _firestore.collection(fbUsers).doc(id).collection(fbShinies).get().then((value) {
-      if (value.docs.isNotEmpty) {
-        shinies = value.docs.length;
-        for (var pokemon in value.docs) {
-          pokemonList.add(
-            CaughtPokemon(
-              id: pokemon.id,
-              name: pokemon[fbPName],
-              encounter: pokemon[fbEncounter],
-              type: pokemon[fbType],
-              type2: pokemon[fbTwoTypes] ? pokemon[fbType2] : '',
-              start: pokemon[fbStart],
-              end: pokemon[fbEnd],
-              nickname: pokemon[fbNickname],
-              time: pokemon[fbTime],
-              rate: pokemon[fbRate],
-            ),
-          );
-          int time1 = pokemon[fbTime];
-          totalTime += time1;
-        }
-        for (var pokemon in pokemonList) {
-          encounters += pokemon.encounter;
-        }
-        time = (totalTime / pokemonList.length).round();
-        average = (encounters / pokemonList.length).round();
-        pokemonList.sort((a, b) => a.encounter.compareTo(b.encounter));
-        idMost = pokemonList.last.id;
-        nameMost = pokemonList.last.name;
-        typeMost = pokemonList.last.type;
-        type2Most = pokemonList.last.type2;
-        idLeast = pokemonList.first.id;
-        nameLeast = pokemonList.first.name;
-        typeLeast = pokemonList.first.type;
-        type2Least = pokemonList.first.type2;
-        pokemonList.sort((a, b) => a.time.compareTo(b.time));
-        idFast = pokemonList.first.id;
-        nameFast = pokemonList.first.name;
-        typeFast = pokemonList.first.type;
-        type2Fast = pokemonList.first.type2;
-        idSlow = pokemonList.last.id;
-        nameSlow = pokemonList.last.name;
-        typeSlow = pokemonList.last.type;
-        type2Slow = pokemonList.last.type2;
-      }
-    });
-    setState(() {
-      shinies;
-      encounters;
-      average;
-      idLeast;
-      idMost;
-      idFast;
-      idSlow;
-      nameSlow;
-      nameFast;
-      nameMost;
-      nameLeast;
-      type2Slow;
-      type2Fast;
-      type2Least;
-      type2Most;
-      typeSlow;
-      typeFast;
-      typeMost;
-      typeLeast;
-      time;
-    });
+    if (mounted) {
+      setState(() {
+        firstName;
+        lastName;
+        nickName;
+        profilePicture;
+      });
+    }
   }
 
   List<Widget> getProfilePictures() {
     List<Widget> gridList = [];
     for (var image in imageList) {
-      gridList.add(ProfileGridTile(
-          onPress: () {
-            storage.write(key: stProfilePicture, value: image);
-            _controller.hideTooltip();
-            setState(() {
-              profilePicture = image;
-            });
-          },
-          image: 'images/$image.png'));
+      gridList.add(
+        ProfileGridTile(
+            onPress: () {
+              storage.write(key: stProfilePicture, value: image);
+              _controller.hideTooltip();
+              setState(() {
+                profilePicture = image;
+              });
+            },
+            image: 'images/$image.png'),
+      );
     }
     return gridList;
   }

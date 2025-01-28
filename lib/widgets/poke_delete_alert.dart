@@ -8,7 +8,7 @@ class PokeDeleteAlert extends StatelessWidget {
   final String content;
   final void Function() onYes;
 
-  PokeDeleteAlert({required this.title, required this.onYes, required this.content});
+  const PokeDeleteAlert({super.key, required this.title, required this.onYes, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +31,23 @@ class PokeDeleteAlert extends StatelessWidget {
             ),
             Text(
               title,
-              style: kScreenTitleStyle.copyWith(color: Theme.of(context).colorScheme.onErrorContainer),
+              style: kHeadline2TextStyle.copyWith(color: Theme.of(context).colorScheme.onErrorContainer),
             ),
           ],
         ),
       ),
-      content: Text(
-        content,
-        style: kErrorTextStyle.copyWith(color: Theme.of(context).colorScheme.onErrorContainer),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Divider(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          Text(
+            content,
+            style: kErrorTextStyle.copyWith(color: Theme.of(context).colorScheme.onErrorContainer),
+          ),
+        ],
       ),
       actions: [
         TextButton(
@@ -47,7 +56,7 @@ class PokeDeleteAlert extends StatelessWidget {
           },
           child: Text(
             'No',
-            style: kButtonTextStyle.copyWith(
+            style: kTextButtonTextStyle.copyWith(
               color: Theme.of(context).colorScheme.onErrorContainer,
             ),
           ),
@@ -56,7 +65,7 @@ class PokeDeleteAlert extends StatelessWidget {
           onPressed: onYes,
           child: Text(
             'Yes',
-            style: kButtonTextStyle.copyWith(
+            style: kTextButtonTextStyle.copyWith(
               color: Theme.of(context).colorScheme.onErrorContainer,
             ),
           ),

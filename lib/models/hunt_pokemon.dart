@@ -8,6 +8,7 @@ class HuntPokemon {
   final String nickname;
   final int time;
   final String rate;
+  final String game;
 
   HuntPokemon({
     required this.id,
@@ -19,5 +20,6 @@ class HuntPokemon {
     required this.nickname,
     required this.time,
     required this.rate,
+    required this.game,
   });
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:pokemon_shiny_hunt/widgets/poke_switch.dart';
@@ -37,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           selectedLanguage = value!;
         });
       },
-      style: kButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+      style: kTextButtonTextStyle.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
       borderRadius: BorderRadius.circular(20.0),
       dropdownColor: Theme.of(context).colorScheme.primaryContainer,
       isExpanded: false,
@@ -47,70 +46,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Language',
-                style: kHeadline2TextStyle,
-              ),
-              const SizedBox(
-                width: 4.0,
-              ),
-              getDropdown(),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Dark mode',
-                style: kHeadline2TextStyle,
-              ),
-              const SizedBox(
-                width: 4.0,
-              ),
-              PokeSwitch(
-                activeIcon: Symbols.dark_mode_rounded,
-                inactiveIcon: Symbols.light_mode_rounded,
-                value: Provider.of<DataHandler>(context).mode == ThemeMode.dark,
-                onChanged: (value) {
-                  setState(() {
-                    Provider.of<DataHandler>(context, listen: false).toggleMode();
-                  });
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Notifications',
-                style: kHeadline2TextStyle,
-              ),
-              const SizedBox(
-                width: 4.0,
-              ),
-              PokeSwitch(
-                activeIcon: Symbols.notifications_active_rounded,
-                inactiveIcon: Symbols.notifications_off_rounded,
-                value: _notifications,
-                onChanged: (value) {
-                  setState(() {
-                    _notifications = value;
-                  });
-                },
-              )
-            ],
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings', style: kHeadline2TextStyle,),),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Language',
+                  style: kHeadline2TextStyle,
+                ),
+                const SizedBox(
+                  width: 4.0,
+                ),
+                getDropdown(),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Dark mode',
+                  style: kHeadline2TextStyle,
+                ),
+                const SizedBox(
+                  width: 4.0,
+                ),
+                PokeSwitch(
+                  activeIcon: Symbols.dark_mode_rounded,
+                  inactiveIcon: Symbols.light_mode_rounded,
+                  value: Provider.of<DataHandler>(context).mode == ThemeMode.dark,
+                  onChanged: (value) {
+                    setState(() {
+                      Provider.of<DataHandler>(context, listen: false).toggleMode();
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Notifications',
+                  style: kHeadline2TextStyle,
+                ),
+                const SizedBox(
+                  width: 4.0,
+                ),
+                PokeSwitch(
+                  activeIcon: Symbols.notifications_active_rounded,
+                  inactiveIcon: Symbols.notifications_off_rounded,
+                  value: _notifications,
+                  onChanged: (value) {
+                    setState(() {
+                      _notifications = value;
+                    });
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

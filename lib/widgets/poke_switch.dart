@@ -5,14 +5,14 @@ class PokeSwitch extends StatelessWidget {
   final IconData inactiveIcon;
   final bool value;
   final void Function(bool) onChanged;
-  const PokeSwitch({required this.activeIcon, required this.inactiveIcon, required this.value, required this.onChanged});
+  const PokeSwitch({super.key, required this.activeIcon, required this.inactiveIcon, required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Switch(
-        thumbIcon: MaterialStateProperty.resolveWith<Icon?>(
-              (Set<MaterialState> states) {
-            if (states.contains(MaterialState.selected)) {
+        thumbIcon: WidgetStateProperty.resolveWith<Icon?>(
+              (Set<WidgetState> states) {
+            if (states.contains(WidgetState.selected)) {
               return Icon(
                 activeIcon,
                 color: Theme.of(context).colorScheme.onTertiary,
